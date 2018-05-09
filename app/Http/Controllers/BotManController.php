@@ -23,8 +23,6 @@ class BotManController extends Controller
      */
     public function tinker()
     {
-        abort_unless(config('app.debug', false), 404);
-
         return view('tinker');
     }
 
