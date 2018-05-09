@@ -11,11 +11,9 @@ class BotManController extends Controller
     /**
      * Place your BotMan logic here.
      */
-    public function handle()
+    public function handle(BotMan $bot)
     {
-        $botman = app('botman');
-
-        $botman->listen();
+        $bot->listen();
     }
 
     /**
