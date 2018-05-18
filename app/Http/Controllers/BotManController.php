@@ -2,18 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use BotMan\BotMan\BotMan;
-use Illuminate\Http\Request;
 use App\Conversations\ExampleConversation;
+use BotMan\BotMan\BotMan;
 
 class BotManController extends Controller
 {
+
+    protected $botman;
+
+    public function __construct()
+    {
+        $this->botman = app('botman');
+    }
+
     /**
      * Place your BotMan logic here.
      */
-    public function handle(BotMan $bot)
+    public function handle()
     {
-        $bot->listen();
+        $this->botman->listen();
     }
 
     /**
@@ -28,8 +35,8 @@ class BotManController extends Controller
      * Loaded through routes/botman.php
      * @param  BotMan $bot
      */
-    public function startConversation(BotMan $bot)
+    public function startConversation()
     {
-        $bot->startConversation(new ExampleConversation());
+        $this->botman->startConversation(new ExampleConversation());
     }
 }
