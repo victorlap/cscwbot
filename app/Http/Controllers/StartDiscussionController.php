@@ -5,8 +5,9 @@ namespace App\Http\Controllers;
 use App\Discussion;
 use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Exceptions\Base\BotManException;
-use BotMan\BotMan\Exceptions\Core\BadMethodCallException;
 use BotMan\BotMan\Interfaces\UserInterface;
+use Facades\App\Clients\Slack;
+use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Log;
 
 class StartDiscussionController extends Controller
@@ -59,10 +60,8 @@ class StartDiscussionController extends Controller
     public function createSlackChannel()
     {
         try {
-            $response = $this->bot->sendRequest('channels.create', [
-                'name' => '_discussion'
-            ]);
-        } catch (BadMethodCallException $exception) {
+            $response = Slack::createChannel('_discussion');
+        } catch (RequestException $exception) {
             $this->respondError();
             return;
         }

@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Clients\Slack;
+use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +25,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app['config'];
+        $this->app->singleton(Slack::class, function ($app) {
+            $client = new Client('https://slack.com/api');
+            return new Slack($client, $app['config']['botman']['slack']);
+        });
     }
 }
