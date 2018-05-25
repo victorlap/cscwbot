@@ -62,6 +62,7 @@ class StartDiscussionController extends Controller
         try {
             $response = Slack::createChannel('_discussion');
         } catch (RequestException $exception) {
+            Log::error($exception->getMessage());
             $this->respondError();
             return;
         }
