@@ -30,13 +30,4 @@ class BotManController extends Controller
     {
         return view('tinker');
     }
-
-    /**
-     * Loaded through routes/botman.php
-     * @param  BotMan $bot
-     */
-    public function startConversation()
-    {
-        $this->botman->startConversation(new ExampleConversation());
-    }
 }
