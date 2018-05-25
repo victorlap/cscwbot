@@ -27,7 +27,9 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app['config'];
         $this->app->singleton(Slack::class, function ($app) {
-            $client = new Client('https://slack.com/api');
+            $client = new Client([
+                'base_url' => 'https://slack.com/api',
+            ]);
             return new Slack($client, $app['config']['botman']['slack']);
         });
     }
