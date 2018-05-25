@@ -13,3 +13,5 @@
 
 Route::match(['get', 'post'], '/botman', 'BotManController@handle');
 Route::get('/tinker', 'BotManController@tinker');
+
+Route::get('/logs', '\Rap2hpoutre\LaravelLogViewer\LogViewerController@index');
