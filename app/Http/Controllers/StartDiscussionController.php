@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Clients\Slack;
 use App\Discussion;
 use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Exceptions\Base\BotManException;
 use BotMan\BotMan\Interfaces\UserInterface;
-use Facades\App\Clients\Slack;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\ResponseInterface;
@@ -61,15 +61,15 @@ class StartDiscussionController extends Controller
     public function createSlackChannel()
     {
         try {
+            $channelName = str_limit('_discussion_' . str_slug($this->name, '_'), 20);
+
             /** @var ResponseInterface $response */
-            $response = Slack::createChannel('_discussion');
+            $response = app(Slack::class)->createChannel($channelName);
         } catch (RequestException $exception) {
-            Log::error($exception->getMessage());
             $this->respondError();
+            Log::error($exception->getMessage());
             return;
         }
-
-        Log::info('json decoded', json_decode((string)$response->getBody(), true));
 
         $response = json_decode((string)$response->getBody());
         $this->channel = $response->channel;
@@ -83,9 +83,9 @@ class StartDiscussionController extends Controller
                 ),
                 $response->channel->id
             );
-        } catch (BotManException $e) {
+        } catch (BotManException $exception) {
             $this->respondError();
-            return;
+            Log::error($exception->getMessage());
         }
     }
 
