@@ -67,7 +67,6 @@ class StartDiscussionController extends Controller
             return;
         }
 
-        Log::info('got channel create response', $response->getContent());
         Log::info('json decoded', json_decode($response->getContent(), true));
 
         $response = json_decode($response->getContent());
