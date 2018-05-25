@@ -9,6 +9,7 @@ use BotMan\BotMan\Interfaces\UserInterface;
 use Facades\App\Clients\Slack;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Log;
+use Psr\Http\Message\ResponseInterface;
 
 class StartDiscussionController extends Controller
 {
@@ -60,6 +61,7 @@ class StartDiscussionController extends Controller
     public function createSlackChannel()
     {
         try {
+            /** @var ResponseInterface $response */
             $response = Slack::createChannel('_discussion');
         } catch (RequestException $exception) {
             Log::error($exception->getMessage());
@@ -67,9 +69,9 @@ class StartDiscussionController extends Controller
             return;
         }
 
-        Log::info('json decoded', json_decode($response->getContent(), true));
+        Log::info('json decoded', json_decode((string)$response->getBody(), true));
 
-        $response = json_decode($response->getContent());
+        $response = json_decode((string)$response->getBody());
         $this->channel = $response->channel;
 
         try {
