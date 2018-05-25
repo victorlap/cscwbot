@@ -38,7 +38,7 @@ class Slack
         ]);
         return $this->client->post(
             $endpoint,
-            ['body' => $params]
+            ['json' => $params]
         );
     }
 
