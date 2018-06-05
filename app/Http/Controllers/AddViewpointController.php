@@ -44,5 +44,21 @@ class AddViewpointController extends Controller
             'viewpoint' => $name,
             'author' => $this->user->getUsername()
         ]);
+
+        Log::error(print_r($this->$botman));
+
+        try {
+            $this->botman->say(
+                sprintf(
+                    "@%s added a viewpoint: \"%s\".",
+                    $this->user->getUsername(),
+                    $this->name
+                ),
+                $this->channel->id
+            );
+        } catch (BotManException $exception) {
+            Log::error($exception->getMessage());
+        }
+
     }
 }
