@@ -24,6 +24,8 @@ class AddViewpointController extends Controller
 
     protected $channel;
 
+    protected $discussion;
+
     /**
      * @param BotMan $bot
      * @param string $name
@@ -41,13 +43,17 @@ class AddViewpointController extends Controller
 
     public function addViewpoint($name)
     {
-//        Viewpoint::create([
-//            'viewpoint' => $name,
-//            'author' => $this->user->getUsername()
-//        ]);
 
         $discussion = DB::table('discussions')->where('discussion_channel', $this->botman->getMessage()->getRecipient())->first();
-        Log::debug('Discussion ID =  ' . $discussion->name);
+        Log::debug('Discussion ID =  ' . $discussion->id);
+
+        $this->discussion = $discussion->id;
+
+        Viewpoint::create([
+            'viewpoint' => $name,
+            'author' => $this->user->getUsername(),
+            'discussion_id' => $this->discussion
+        ]);
 
         try {
             $this->botman->say(
