@@ -71,6 +71,9 @@ class StartDiscussionController extends Controller
             return;
         }
 
+        Log::info((string)$response->getBody());
+        Log::infO(json_decode((string)$response->getBody()));
+
         $response = json_decode((string)$response->getBody());
         $this->channel = $response->channel;
 
