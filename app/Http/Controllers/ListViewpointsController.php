@@ -55,7 +55,7 @@ class ListViewpointsController extends Controller
                 count($viewpoints),
                 $viewpoints[0]->viewpoint
             ),
-            $this->channel->id
+            $this->botman->getMessage()->getRecipient()
         );
 
     }
