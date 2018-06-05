@@ -37,6 +37,8 @@ class Log implements Received, Captured, Matching, Heard, Sending
      */
     public function received(IncomingMessage $message, $next, BotMan $bot)
     {
+        Log::info("received message", ['message' => $message->getText()]);
+
         return $next($message);
     }
 
@@ -62,8 +64,6 @@ class Log implements Received, Captured, Matching, Heard, Sending
      */
     public function heard(IncomingMessage $message, $next, BotMan $bot)
     {
-        Log::info("received message", ['message' => $message->getText()]);
-
         return $next($message);
     }
 

@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Clients\Slack;
+use App\Http\Middleware\Log;
+use BotMan\BotMan\BotMan;
 use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
 
@@ -33,5 +35,11 @@ class AppServiceProvider extends ServiceProvider
             ]);
             return new Slack($client, $app['config']['botman']['slack']);
         });
+
+        $logEverything = new Log();
+        /** @var BotMan $botman */
+        $botman = resolve('botman');
+        $botman->middleware->received($logEverything);
+        $botman->middleware->sending($logEverything);
     }
 }
