@@ -51,7 +51,11 @@ class ListViewpointsController extends Controller
 
         $viewpoints_string = '';
         foreach ($viewpoints as $viewpoint) {
-            $viewpoints_string .= '\n ' . $viewpoint->viewpoint . ' by ' . $viewpoint->author;
+            $viewpoints_string .= sprintf(
+                "\n*%s* by <@%s>",
+                $viewpoint->viewpoint,
+                $viewpoint->author
+            );
         }
 
         $this->botman->say(
