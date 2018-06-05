@@ -28,7 +28,6 @@ class ListViewpointsController extends Controller
 
     /**
      * @param BotMan $bot
-     * @param string $name
      */
     public function __invoke($bot)
     {
