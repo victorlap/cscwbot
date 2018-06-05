@@ -43,7 +43,7 @@ class ListViewpointsController extends Controller
     {
 
         $discussion = DB::table('discussions')->where('discussion_channel', $this->botman->getMessage()->getRecipient())->first();
-        $viewpoints = DB::table('viewpoints')->select('name')->where('discussion_id', $discussion->id)->get();
+        $viewpoints = DB::table('viewpoints')->select('viewpoint')->where('discussion_id', $discussion->id)->get();
 
         Log::debug('Number of viewpoints =  ' . count($viewpoints));
 
