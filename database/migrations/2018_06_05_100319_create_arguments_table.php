@@ -18,6 +18,7 @@ class CreateArgumentsTable extends Migration
 
             $table->string('argument')->nullable(false);
             $table->string('author');
+            $table->unsignedInteger('viewpoint_id');
             $table->foreign('viewpoint_id')->references('id')->on('viewpoints')->onDelete('cascade');
             $table->integer('priority')->nullable(false)->default(0);
 

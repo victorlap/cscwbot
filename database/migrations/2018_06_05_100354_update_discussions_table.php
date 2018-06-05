@@ -20,6 +20,7 @@ class UpdateDiscussionsTable extends Migration
         });
 
         Schema::table('viewpoints', function (Blueprint $table) {
+            $table->unsignedInteger('discussion_id');
             $table->foreign('discussion_id')->references('id')->on('discussions')->onDelete('cascade');
         });
     }
