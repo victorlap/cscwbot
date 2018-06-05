@@ -49,11 +49,14 @@ class ListViewpointsController extends Controller
 
         $this->discussion = $discussion->id;
 
-        $this->botman->say(sprintf(
-            "There are %s viewpoint(s) for this discussion. The first one is %s",
-            count($viewpoints),
-            $viewpoints[0]->viewpoint
-        ));
+        $this->botman->say(
+            sprintf(
+                "There are %s viewpoint(s) for this discussion. The first one is %s",
+                count($viewpoints),
+                $viewpoints[0]->viewpoint
+            ),
+            $this->channel->id
+        );
 
     }
 }
