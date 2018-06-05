@@ -109,8 +109,10 @@ class StartDiscussionController extends Controller
         try {
             $this->botman->say(
                 sprintf(
-                    "@%s started a new discussion, help solve the issue in #%s",
-                    $this->user->getUsername(),
+                    "<@%s> started a new discussion about \"%s\", help solve the issue in <#%s|%s>!",
+                    $this->user->getId(),
+                    $this->name,
+                    $this->channel->id,
                     $this->channel->name
                 ),
                 $this->botman->getMessage()->getRecipient()
@@ -124,10 +126,9 @@ class StartDiscussionController extends Controller
         try {
             $this->botman->say(
                 sprintf(
-                    "@%s started a new discussion about \"%s\", help solve the issue in #%s",
-                    $this->user->getUsername(),
-                    $this->name,
-                    $this->channel->name
+                    "<@%s> started a new discussion about \"%s\", help solve the issue!",
+                    $this->user->getId(),
+                    $this->name
                 ),
                 $this->channel->id
             );

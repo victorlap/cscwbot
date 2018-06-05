@@ -2,15 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Clients\Slack;
-use App\Viewpoint;
+use App\Discussion;
 use BotMan\BotMan\BotMan;
-use BotMan\BotMan\Exceptions\Base\BotManException;
-use BotMan\BotMan\Interfaces\UserInterface;
-use Illuminate\Support\Facades\DB;
-use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Log;
-use Psr\Http\Message\ResponseInterface;
 
 class ListViewpointsController extends Controller
 {
@@ -23,8 +17,6 @@ class ListViewpointsController extends Controller
     protected $name;
 
     protected $channel;
-
-    protected $discussion;
 
     /**
      * @param BotMan $bot
@@ -42,12 +34,10 @@ class ListViewpointsController extends Controller
     public function listViewpoints()
     {
 
-        $discussion = DB::table('discussions')->where('discussion_channel', $this->botman->getMessage()->getRecipient())->first();
-        $viewpoints = DB::table('viewpoints')->select('viewpoint', 'author')->where('discussion_id', $discussion->id)->get();
+        $discussion = Discussion::where('discussion_channel', $this->botman->getMessage()->getRecipient())->first();
+        $viewpoints = $discussion->viewpoints;
 
-        Log::debug('Number of viewpoints =  ' . count($viewpoints));
-
-        $this->discussion = $discussion->id;
+        Log::debug('Number of viewpoints =  ' . $viewpoints->count());
 
         $viewpoints_string = '';
         foreach ($viewpoints as $viewpoint) {
@@ -57,7 +47,7 @@ class ListViewpointsController extends Controller
         $this->botman->say(
             sprintf(
                 "There are %s viewpoint(s) for this discussion. The viewpoints are: \n %s",
-                count($viewpoints),
+                $viewpoints->count(),
                 $viewpoints_string
             ),
             $this->botman->getMessage()->getRecipient()
