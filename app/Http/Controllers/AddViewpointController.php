@@ -40,10 +40,10 @@ class AddViewpointController extends Controller
 
     public function addViewpoint($name)
     {
-        Viewpoint::create([
-            'viewpoint' => $name,
-            'author' => $this->user->getUsername()
-        ]);
+//        Viewpoint::create([
+//            'viewpoint' => $name,
+//            'author' => $this->user->getUsername()
+//        ]);
 
         Log::debug('An informational message by ' . print_r($this->bot));
 
