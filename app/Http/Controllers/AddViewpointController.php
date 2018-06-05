@@ -47,7 +47,7 @@ class AddViewpointController extends Controller
 //        ]);
 
         $discussion_id = DB::select('select * from discussions where discussion_channel = ?', [$this->botman->getMessage()->getRecipient()]);
-        Log::debug('Discussion ID =  ' . gettype($discussion_id[0]));
+        Log::debug('Discussion ID =  ' . var_dump(get_object_vars($discussion_id[0])));
 
         try {
             $this->botman->say(
