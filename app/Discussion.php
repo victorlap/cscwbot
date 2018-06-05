@@ -8,4 +8,8 @@ class Discussion extends Model
 {
     protected $guarded = [];
 
+    public function viewpoints()
+    {
+        return $this->hasMany(Viewpoint::class);
+    }
 }

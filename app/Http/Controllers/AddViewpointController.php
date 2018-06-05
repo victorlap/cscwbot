@@ -2,15 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Clients\Slack;
-use App\Viewpoint;
+use App\Discussion;
 use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Exceptions\Base\BotManException;
-use BotMan\BotMan\Interfaces\UserInterface;
-use Illuminate\Support\Facades\DB;
-use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Log;
-use Psr\Http\Message\ResponseInterface;
 
 class AddViewpointController extends Controller
 {
@@ -23,8 +18,6 @@ class AddViewpointController extends Controller
     protected $name;
 
     protected $channel;
-
-    protected $discussion;
 
     /**
      * @param BotMan $bot
@@ -44,15 +37,12 @@ class AddViewpointController extends Controller
     public function addViewpoint($name)
     {
 
-        $discussion = DB::table('discussions')->where('discussion_channel', $this->botman->getMessage()->getRecipient())->first();
+        $discussion = Discussion::where('discussion_channel', $this->botman->getMessage()->getRecipient())->first();
         Log::debug('Discussion ID =  ' . $discussion->id);
 
-        $this->discussion = $discussion->id;
-
-        Viewpoint::create([
+        $discussion->viewpoints()->create([
             'viewpoint' => $name,
             'author' => $this->user->getUsername(),
-            'discussion_id' => $this->discussion
         ]);
 
         try {
