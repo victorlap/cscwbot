@@ -76,6 +76,7 @@ class StartDiscussionController extends Controller
             $this->channel = $response->channel;
 
             $this->bot = $this->botman->sendRequest('auth.test');
+
             $this->bot = json_decode($this->bot->getContent());
             if(!$this->bot->ok) {
                 return false;

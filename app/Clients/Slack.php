@@ -6,6 +6,7 @@ namespace App\Clients;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\Log;
 
 class Slack
 {
@@ -44,10 +45,13 @@ class Slack
         $params = array_merge_recursive($params, [
             'token' => $this->config['app_token']
         ]);
-        return $this->client->post(
+        $response = $this->client->post(
             $endpoint,
             ['form_params' => $params]
         );
+        Log::info($endpoint, json_decode((string)$response->getBody(), true));
+
+        return $response;
     }
 
 
