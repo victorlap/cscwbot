@@ -7,6 +7,7 @@ use App\Viewpoint;
 use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Exceptions\Base\BotManException;
 use BotMan\BotMan\Interfaces\UserInterface;
+use Illuminate\Support\Facades\DB;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\ResponseInterface;
@@ -45,7 +46,8 @@ class AddViewpointController extends Controller
 //            'author' => $this->user->getUsername()
 //        ]);
 
-        Log::debug('An informational message by ' . $this->bot);
+        $discussion_id = DB::select('select * from discussion where discussion_channel = ?', [$this->botman->getMessage()->getRecipient()]);
+        Log::debug('Discussion ID =  ' . $discussion_id[0]->id);
 
         try {
             $this->botman->say(
