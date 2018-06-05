@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateArgumentsTable extends Migration
 {
@@ -16,11 +16,11 @@ class CreateArgumentsTable extends Migration
         Schema::create('arguments', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->string('argument')->nullable(false);
+            $table->string('argument');
             $table->string('author');
             $table->unsignedInteger('viewpoint_id');
             $table->foreign('viewpoint_id')->references('id')->on('viewpoints')->onDelete('cascade');
-            $table->integer('priority')->nullable(false)->default(0);
+            $table->integer('priority')->default(0);
 
             $table->timestamps();
         });

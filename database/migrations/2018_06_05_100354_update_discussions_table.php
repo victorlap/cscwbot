@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class UpdateDiscussionsTable extends Migration
 {
@@ -14,9 +14,9 @@ class UpdateDiscussionsTable extends Migration
     public function up()
     {
         Schema::table('discussions', function (Blueprint $table) {
-            $table->enum('state', ['add_arguments', 'rate_arguments', 'voting', 'closed'])->default('add_arguments')->nullable(false);
+            $table->enum('state', ['add_arguments', 'rate_arguments', 'voting', 'closed'])->default('add_arguments');
             $table->string('author');
-            $table->unsignedInteger('result');
+            $table->unsignedInteger('result')->nullable();
             $table->foreign('result')->references('id')->on('viewpoints');
         });
 

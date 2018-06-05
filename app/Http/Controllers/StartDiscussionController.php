@@ -54,7 +54,8 @@ class StartDiscussionController extends Controller
         Discussion::create([
             'name' => $this->name,
             'originating_channel' => $this->botman->getMessage()->getRecipient(),
-            'discussion_channel' => $this->channel->id
+            'discussion_channel' => $this->channel->id,
+            'author' => $this->user->getUsername()
         ]);
     }
 
