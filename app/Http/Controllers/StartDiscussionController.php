@@ -86,6 +86,10 @@ class StartDiscussionController extends Controller
                 $this->channel->id,
                 $this->bot->user_id
             );
+            app(Slack::class)->joinChannel(
+                $this->channel->id,
+                $this->user->getId()
+            );
 
         } catch (RequestException | BotManException $exception) {
             Log::error($exception->getMessage());
