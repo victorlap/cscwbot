@@ -45,18 +45,8 @@ class StartDiscussionController extends Controller
         }
 
         $this->createDiscussion();
-
-        try {
-            $this->botman->say(
-                sprintf(
-                    "%s started a new discussion, help solve the issue in %s",
-                    $this->user->getUsername(),
-                    $this->channel->name
-                ),
-                $this->botman->getMessage()->getRecipient()
-            );
-        } catch (BotManException $e) {
-        }
+        $this->giveInfoInNewChannel();
+        $this->giveInfoInOriginatingChannel();
     }
 
     public function createDiscussion()
@@ -100,26 +90,58 @@ class StartDiscussionController extends Controller
             return false;
         }
 
-        try {
-            $this->botman->say(
-                sprintf(
-                    "%s started a new discussion, help solve the issue in %s",
-                    $this->user->getUsername(),
-                    $this->channel->name
-                ),
-                $this->channel->id
-            );
-
-        } catch (BotManException $exception) {
-            Log::error($exception->getMessage());
-            return false;
-        }
-
         return true;
     }
 
     public function respondError()
     {
         $this->botman->reply("Something went wrong while trying to create your channel, sorry!");
+    }
+
+    public function giveInfoInOriginatingChannel(): void
+    {
+        try {
+            $this->botman->say(
+                sprintf(
+                    "@%s started a new discussion, help solve the issue in #%s",
+                    $this->user->getUsername(),
+                    $this->channel->name
+                ),
+                $this->botman->getMessage()->getRecipient()
+            );
+        } catch (BotManException $e) {
+        }
+    }
+
+    public function giveInfoInNewChannel(): void
+    {
+        try {
+            $this->botman->say(
+                sprintf(
+                    "@%s started a new discussion about \"%s\", help solve the issue in #%s",
+                    $this->user->getUsername(),
+                    $this->name,
+                    $this->channel->name
+                ),
+                $this->channel->id
+            );
+            $this->botman->say(
+            "
+            Discussions happen in three rounds. \n
+            Round 1: \n
+            use `/argument {argument}` to add arguments  \n
+            use `/viewpoint {viewpoint}` to add viewpoints \n
+            Round 2: \n
+            use `/arguments` to see a list of arguments and use the buttons to prioritise \n
+            Round 3: \n
+            use `/vote {viewpoint}` to vote for a specific viewpoint \n \n            
+            When you are done voting, you can close the channel using `/close {viewpoint?}`, you can optionally provide a winning viewpoint which gets communicated to the originating channel.
+            ",
+                $this->channel->id
+            );
+
+        } catch (BotManException $exception) {
+            Log::error($exception->getMessage());
+        }
     }
 }
