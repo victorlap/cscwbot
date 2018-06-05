@@ -49,11 +49,16 @@ class ListViewpointsController extends Controller
 
         $this->discussion = $discussion->id;
 
+        $viewpoints_string = '';
+        foreach ($viewpoints as $viewpoint) {
+            $viewpoints_string .= '\n ' . $viewpoint->viewpoint . ' by ' . $viewpoint->author;
+        }
+
         $this->botman->say(
             sprintf(
-                "There are %s viewpoint(s) for this discussion. The first one is %s",
+                "There are %s viewpoint(s) for this discussion. The viewpoints are: \n %s",
                 count($viewpoints),
-                $viewpoints[0]->viewpoint
+                $viewpoints_string
             ),
             $this->botman->getMessage()->getRecipient()
         );
