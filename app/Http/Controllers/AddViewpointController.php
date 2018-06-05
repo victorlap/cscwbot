@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Clients\Slack;
-use App\Argument;
+use App\Viewpoint;
 use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Exceptions\Base\BotManException;
 use BotMan\BotMan\Interfaces\UserInterface;
@@ -11,9 +11,8 @@ use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\ResponseInterface;
 
-class AddArgumentController extends Controller
+class AddViewpointController extends Controller
 {
-
     protected $botman;
 
     protected $bot;
@@ -34,14 +33,15 @@ class AddArgumentController extends Controller
         $this->name = $name;
         $this->user = $bot->getUser();
 
-        $bot->reply("Hello, your argument was added");
+        $bot->reply("Hello, your viewpoint is being added.");
+        $this->addViewpoint($name);
 
     }
 
-    public function addArgument($name)
+    public function addViewpoint($name)
     {
-        Argument::create([
-            'name' => $name,
+        Viewpoint::create([
+            'viewpoint' => $name,
             'author' => $this->user->getUsername()
         ]);
     }

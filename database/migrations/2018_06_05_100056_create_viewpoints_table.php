@@ -16,7 +16,7 @@ class CreateViewpointsTable extends Migration
         Schema::create('viewpoints', function (Blueprint $table) {
             $table->increments('id');
 
-            $table->string('viewpoint')->nullable(false);
+            $table->string('viewpoint');
             $table->string('author');
 
             $table->timestamps();
