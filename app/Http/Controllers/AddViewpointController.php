@@ -62,7 +62,7 @@ class AddViewpointController extends Controller
                     $this->user->getUsername(),
                     $this->name
                 ),
-                $this->channel->id
+                $this->botman->getMessage()->getRecipient()
             );
         } catch (BotManException $exception) {
             Log::error($exception->getMessage());
