@@ -9,8 +9,10 @@ use BotMan\BotMan\Interfaces\Middleware\Matching;
 use BotMan\BotMan\Interfaces\Middleware\Received;
 use BotMan\BotMan\Interfaces\Middleware\Sending;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
+use Illuminate\Support\Facades\Log;
 
-class Log implements Received, Captured, Matching, Heard, Sending
+
+class LogMiddleware implements Received, Captured, Matching, Heard, Sending
 {
     /**
      * Handle a captured message.
