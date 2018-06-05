@@ -16,6 +16,7 @@ class UpdateDiscussionsTable extends Migration
         Schema::table('discussions', function (Blueprint $table) {
             $table->enum('state', ['add_arguments', 'rate_arguments', 'voting', 'closed'])->default('add_arguments')->nullable(false);
             $table->string('author');
+            $table->unsignedInteger('result');
             $table->foreign('result')->references('id')->on('viewpoints');
         });
 
