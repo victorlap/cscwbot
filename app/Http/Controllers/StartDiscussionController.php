@@ -127,15 +127,19 @@ class StartDiscussionController extends Controller
             );
             $this->botman->say(
             "
-            Discussions happen in three rounds. \n
-            Round 1: \n
-            use `/argument {argument}` to add arguments  \n
-            use `/viewpoint {viewpoint}` to add viewpoints \n
-            Round 2: \n
-            use `/arguments` to see a list of arguments and use the buttons to prioritise \n
-            Round 3: \n
-            use `/vote {viewpoint}` to vote for a specific viewpoint \n \n            
-            When you are done voting, you can close the channel using `/close {viewpoint?}`, you can optionally provide a winning viewpoint which gets communicated to the originating channel.
+Discussions happen in three rounds.
+
+Round 1: 
+use `/argument {argument}` to add arguments 
+use `/viewpoint {viewpoint}` to add viewpoints 
+
+Round 2: 
+use `/arguments` to see a list of arguments and use the buttons to prioritise 
+
+Round 3: 
+use `/vote {viewpoint}` to vote for a specific viewpoint 
+
+When you are done voting, you can close the channel using `/close {viewpoint?}`, you can optionally provide a winning viewpoint which gets communicated to the originating channel.
             ",
                 $this->channel->id
             );
