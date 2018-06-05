@@ -46,7 +46,7 @@ class AddViewpointController extends Controller
 //            'author' => $this->user->getUsername()
 //        ]);
 
-        $discussion_id = DB::select('select * from discussion where discussion_channel = ?', [$this->botman->getMessage()->getRecipient()]);
+        $discussion_id = DB::select('select * from discussions where discussion_channel = ?', [$this->botman->getMessage()->getRecipient()]);
         Log::debug('Discussion ID =  ' . $discussion_id[0]);
 
         try {
