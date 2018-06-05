@@ -14,6 +14,8 @@ use Psr\Http\Message\ResponseInterface;
 class StartDiscussionController extends Controller
 {
     /** @var BotMan */
+    protected $botman;
+
     protected $bot;
 
     /** @var UserInterface */
@@ -31,29 +33,37 @@ class StartDiscussionController extends Controller
      */
     public function __invoke($bot, $name)
     {
-        $this->bot = $bot;
+        $this->botman = $bot;
         $this->name = $name;
         $this->user = $bot->getUser();
 
         $bot->reply("Got it. Give me a few seconds to get that done...");
 
-        $this->createSlackChannel();
+        if(!$this->createSlackChannel()) {
+            $this->respondError();
+            return;
+        }
+
         $this->createDiscussion();
 
-        $bot->reply(
-            sprintf(
-                "%s started a new discussion, help solve the issue in %s",
-                $this->user->getUsername(),
-                $this->channel->name
-            )
-        );
+        try {
+            $this->botman->say(
+                sprintf(
+                    "%s started a new discussion, help solve the issue in %s",
+                    $this->user->getUsername(),
+                    $this->channel->name
+                ),
+                $this->botman->getMessage()->getRecipient()
+            );
+        } catch (BotManException $e) {
+        }
     }
 
     public function createDiscussion()
     {
         Discussion::create([
             'name' => $this->name,
-            'originating_channel' => $this->bot->getMessage()->getRecipient(),
+            'originating_channel' => $this->botman->getMessage()->getRecipient(),
             'discussion_channel' => $this->channel->id
         ]);
     }
@@ -61,39 +71,55 @@ class StartDiscussionController extends Controller
     public function createSlackChannel()
     {
         try {
-            $channelName = str_limit('_discussion_' . str_slug($this->name, '_'), 20);
+            $channelName = str_limit('_discussion_' . Discussion::count(), 20);
 
             /** @var ResponseInterface $response */
             $response = app(Slack::class)->createChannel($channelName);
-        } catch (RequestException $exception) {
-            $this->respondError();
+
+            $response = json_decode((string)$response->getBody());
+
+            if(!$response->ok) {
+                return false;
+            }
+
+            $this->channel = $response->channel;
+
+            $this->bot = $this->botman->sendRequest('auth.test');
+            $this->bot = json_decode($this->bot->getContent());
+            if(!$this->bot->ok) {
+                return false;
+            }
+
+            app(Slack::class)->joinChannel(
+                $this->channel->id,
+                $this->bot->user_id
+            );
+
+        } catch (RequestException | BotManException $exception) {
             Log::error($exception->getMessage());
-            return;
+            return false;
         }
 
-        Log::info((string)$response->getBody());
-        Log::infO(json_decode((string)$response->getBody()));
-
-        $response = json_decode((string)$response->getBody());
-        $this->channel = $response->channel;
-
         try {
-            $this->bot->say(
+            $this->botman->say(
                 sprintf(
                     "%s started a new discussion, help solve the issue in %s",
                     $this->user->getUsername(),
                     $this->channel->name
                 ),
-                $response->channel->id
+                $this->channel->id
             );
+
         } catch (BotManException $exception) {
-            $this->respondError();
             Log::error($exception->getMessage());
+            return false;
         }
+
+        return true;
     }
 
     public function respondError()
     {
-        $this->bot->reply("Something went wrong while trying to create your channel, sorry!");
+        $this->botman->reply("Something went wrong while trying to create your channel, sorry!");
     }
 }

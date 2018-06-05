@@ -26,6 +26,14 @@ class Slack
         ]);
     }
 
+    public function joinChannel($channelId, $userId)
+    {
+        return $this->post('channels.invite', [
+            'channel' => $channelId,
+            'user' => $userId
+        ]);
+    }
+
     /**
      * @param $endpoint
      * @param $params
