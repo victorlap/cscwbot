@@ -17,7 +17,6 @@ class CreateViewpointsTable extends Migration
             $table->increments('id');
 
             $table->string('viewpoint')->nullable(false);
-            $table->foreign('discussion_id')->references('id')->on('discussions')->onDelete('cascade');
             $table->string('author');
 
             $table->timestamps();

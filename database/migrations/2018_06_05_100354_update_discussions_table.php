@@ -18,6 +18,10 @@ class UpdateDiscussionsTable extends Migration
             $table->string('author');
             $table->foreign('result')->references('id')->on('viewpoints');
         });
+
+        Schema::table('viewpoints', function (Blueprint $table) {
+            $table->foreign('discussion_id')->references('id')->on('discussions')->onDelete('cascade');
+        });
     }
 
     /**
@@ -29,6 +33,10 @@ class UpdateDiscussionsTable extends Migration
     {
         Schema::table('discussions', function (Blueprint $table) {
             $table->dropColumn(['state', 'author', 'result']);
+        });
+
+        Schema::table('viewpoints', function (Blueprint $table) {
+            $table->dropColumn('discussion_id');
         });
     }
 }
