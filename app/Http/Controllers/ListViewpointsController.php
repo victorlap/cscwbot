@@ -52,7 +52,7 @@ class ListViewpointsController extends Controller
         $this->botman->reply(sprintf(
             "There are %s viewpoint(s) for this discussion. The first one is %s",
             count($viewpoints),
-            $this->$viewpoints[0]['viewpoint']
+            $viewpoints[0]->viewpoint
         ));
 
     }
