@@ -11,7 +11,7 @@ $botman = resolve('botman');
 $botman->hears('/discussion help', HelpController::class);
 $botman->hears('/discussion {name}', StartDiscussionController::class);
 
-$botman->hears('/viewpoints {name}', AddViewpointController::class);
 $botman->hears('/viewpoints show', ListViewpointsController::class);
+$botman->hears('/viewpoints {name}', AddViewpointController::class);
 
 $botman->hears('/argument {name}', AddArgumentController::class);
