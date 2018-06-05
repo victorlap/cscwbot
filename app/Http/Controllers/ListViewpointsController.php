@@ -42,8 +42,8 @@ class ListViewpointsController extends Controller
     public function listViewpoints()
     {
 
-        $discussion = DB::table('discussions')->where('discussion_channel', $this->botman->getMessage()->getRecipient());
-        $viewpoints = DB::table('viewpoints')->where('discussion_id', $discussion->id);
+        $discussion = DB::table('discussions')->where('discussion_channel', $this->botman->getMessage()->getRecipient())->first();
+        $viewpoints = DB::table('viewpoints')->select('name')->where('discussion_id', $discussion->id)->get();
 
         Log::debug('Number of viewpoints =  ' . count($viewpoints));
 
