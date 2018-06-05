@@ -45,7 +45,7 @@ class AddViewpointController extends Controller
             'author' => $this->user->getUsername()
         ]);
 
-        Log::error(print_r($this->$botman));
+        Log::debug('An informational message by ' . print_r($this->bot));
 
         try {
             $this->botman->say(
