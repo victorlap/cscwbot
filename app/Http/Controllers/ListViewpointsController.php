@@ -50,7 +50,7 @@ class ListViewpointsController extends Controller
 
         $this->botman->say(
             sprintf(
-                "There are %s viewpoint(s) for this discussion. The viewpoints are: \n %s",
+                "There are %s viewpoint(s) for this discussion. The viewpoints are: %s",
                 $viewpoints->count(),
                 $viewpoints_string
             ),
