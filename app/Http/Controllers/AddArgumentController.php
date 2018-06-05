@@ -30,6 +30,7 @@ class AddArgumentController extends Controller
     public function __invoke($bot, $viewpoint, $name)
     {
         $this->botman = $bot;
+        $this->viewpoint = $viewpoint;
         $this->name = $name;
         $this->user = $bot->getUser();
 
@@ -37,21 +38,22 @@ class AddArgumentController extends Controller
         $this->addArgument($viewpoint, $name);
     }
 
-    public function addArgument($name)
+    public function addArgument($viewpoint, $name)
     {
 
         Argument::create([
             'argument' => $name,
-            'viewpoint_id' => $this->viewpoint,
+            'viewpoint_id' => $viewpoint,
             'author' => $this->user->getUsername()
         ]);
 
         try {
             $this->botman->say(
                 sprintf(
-                    "<@%s> added an argument: \"%s\".",
+                    "<@%s> added an argument: \"%s\" for viewpoint %s.",
                     $this->user->getUsername(),
-                    $this->name
+                    $this->name,
+                    $viewpoint
                 ),
                 $this->botman->getMessage()->getRecipient()
             );

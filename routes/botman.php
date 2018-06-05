@@ -14,4 +14,4 @@ $botman->hears('/discussion {name}', StartDiscussionController::class);
 $botman->hears('/viewpoints show', ListViewpointsController::class);
 $botman->hears('/viewpoint {name}', AddViewpointController::class);
 
-$botman->hears('/argument {name}', AddArgumentController::class);
+$botman->hears('/argument {viewpoint} {name}', AddArgumentController::class);
