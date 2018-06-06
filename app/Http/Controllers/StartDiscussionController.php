@@ -37,6 +37,11 @@ class StartDiscussionController extends Controller
         $this->name = $name;
         $this->user = $bot->getUser();
 
+        // Let the help command resolve this one
+        if($name == 'help') {
+            return;
+        }
+
         $bot->reply("Got it. Give me a few seconds to get that done...");
 
         if(!$this->createSlackChannel()) {

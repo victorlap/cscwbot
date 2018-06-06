@@ -29,6 +29,10 @@ class AddViewpointController extends Controller
         $this->name = $name;
         $this->user = $bot->getUser();
 
+        if($name == 'list') {
+            return;
+        }
+
         $this->addViewpoint($name);
 
     }

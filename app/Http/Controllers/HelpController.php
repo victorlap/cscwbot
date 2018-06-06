@@ -13,9 +13,10 @@ class HelpController extends Controller
 
         $bot->reply("
 Here is a quick guide of what I can do:
-• use `/discussion {name}` in a channel to create a new discussion
-• use `/viewpoints {name}` to add a viewpoint when in a discussion
+• use `/viewpoint list` to list all viewpoints in a discussion
+• use `/viewpoint {name}` to add a viewpoint when in a discussion
 • use `/argument {argument}` to add arguments when in a discussion
+• use `/discussion {name}` in a channel to create a new discussion
 • use `/discussion help` to display this help text
         ");
     }
