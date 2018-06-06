@@ -26,7 +26,6 @@ class ListViewpointsController extends Controller
         $this->botman = $bot;
         $this->user = $bot->getUser();
 
-        $bot->reply("Got it. Collecting the viewpoints now.");
         $this->listViewpoints();
 
     }
@@ -48,13 +47,12 @@ class ListViewpointsController extends Controller
             );
         }
 
-        $this->botman->say(
+        $this->botman->reply(
             sprintf(
                 "There are %s viewpoint(s) for this discussion. The viewpoints are: %s",
                 $viewpoints->count(),
                 $viewpoints_string
-            ),
-            $this->botman->getMessage()->getRecipient()
+            )
         );
 
     }

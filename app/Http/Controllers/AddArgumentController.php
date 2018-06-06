@@ -34,7 +34,6 @@ class AddArgumentController extends Controller
         $this->name = $name;
         $this->user = $bot->getUser();
 
-        $bot->reply("Hello, your argument is being added.");
         $this->addArgument($viewpoint, $name);
     }
 

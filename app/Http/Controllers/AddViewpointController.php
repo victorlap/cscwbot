@@ -29,7 +29,6 @@ class AddViewpointController extends Controller
         $this->name = $name;
         $this->user = $bot->getUser();
 
-        $bot->reply("Hello, your viewpoint is being added.");
         $this->addViewpoint($name);
 
     }
