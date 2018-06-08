@@ -99,6 +99,6 @@ class AskViewpointConversation extends Conversation
 
     public function run()
     {
-        $this->showViewpoints();
+        $this->askViewpoint();
     }
 }
