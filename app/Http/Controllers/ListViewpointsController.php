@@ -26,14 +26,14 @@ class ListViewpointsController extends Controller
         $this->botman = $bot;
         $this->user = $bot->getUser();
 
-        $this->listViewpoints();
+        $this->botman->reply($this->listViewpoints($this->botman->getMessage()->getRecipient()));
 
     }
 
-    public function listViewpoints()
+    public static function listViewpoints($channel)
     {
 
-        $discussion = Discussion::where('discussion_channel', $this->botman->getMessage()->getRecipient())->first();
+        $discussion = Discussion::where('discussion_channel', $channel)->first();
         $viewpoints = $discussion->viewpoints;
 
         Log::debug('Number of viewpoints =  ' . $viewpoints->count());
@@ -48,7 +48,7 @@ class ListViewpointsController extends Controller
             );
         }
 
-        $this->botman->reply(
+        return (
             sprintf(
                 "There are %s viewpoint(s) for this discussion. The viewpoints are: %s",
                 $viewpoints->count(),

@@ -31,8 +31,6 @@ class AddArgumentController extends Controller
 
     protected $channel;
 
-    protected $email;
-
     /**
      * @param BotMan $bot
      * @param string $argument
@@ -43,20 +41,24 @@ class AddArgumentController extends Controller
         $this->argument = $argument;
         $this->user = $bot->getUser();
 
-        $result = $this->botman->startConversation(new AddArgumentConversation);
-        $this->addArgument($result, $argument);
+        $this->botman->reply(ListViewpointsController::listViewpoints($this->botman->getMessage()->getRecipient()));
+
+        $this->ask('Hello! What is the *ID* of the viewpoint for your argument?', function(Answer $answer) {
+            $this->addArgument($answer->getText());
+        });
+
     }
 
-    public function addArgument($viewpoint, $argument)
+    public function addArgument($viewpoint)
     {
         Argument::create([
-            'argument' => $argument,
+            'argument' => $this->argument,
             'viewpoint_id' => $viewpoint,
             'author' => $this->user->getUsername()
         ]);
 
         try {
-            $this->say(
+            $this->botman->say(
                 sprintf(
                     "<@%s> added an argument: \"%s\" for viewpoint %s.",
                     $this->user->getUsername(),
@@ -68,49 +70,5 @@ class AddArgumentController extends Controller
         } catch (BotManException $exception) {
             Log::error($exception->getMessage());
         }
-    }
-}
-
-class AddArgumentConversation extends Conversation
-{
-    protected $viewpoint;
-
-    public function showViewpoints()
-    {
-
-        $discussion = Discussion::where('discussion_channel', $this->getMessage()->getRecipient())->first();
-        $viewpoints = $discussion->viewpoints;
-        $viewpoints_string = '';
-        foreach ($viewpoints as $viewpoint) {
-            $viewpoints_string .= sprintf(
-                "ID: *%s* - *%s* by <@%s>",
-                $viewpoint->id,
-                $viewpoint->viewpoint,
-                $viewpoint->author
-            );
-        }
-
-        $this->say(
-            sprintf(
-                "The viewpoints (%s) are: %s.",
-                $viewpoints->count(),
-                $viewpoints_string
-            )
-        );
-    }
-
-    public function askViewpoint()
-    {
-        $this->ask('Hello! What is the *ID* of the viewpoint for your argument?', function(Answer $answer) {
-            // Save result
-            return $answer->getText();
-        });
-    }
-
-    public function run()
-    {
-        // This will be called immediately
-        $this->showViewpoints();
-        $this->askViewpoint();
     }
 }
