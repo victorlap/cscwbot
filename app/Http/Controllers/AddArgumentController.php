@@ -61,7 +61,7 @@ class AddArgumentController extends Controller
                     ])
             );
 
-        $this->botman->ask($question, function (Answer $answer) {
+        $this->botman->ask(json_encode($question), function (Answer $answer) {
             $selectedOptions = $answer->getValue();
         });
 
