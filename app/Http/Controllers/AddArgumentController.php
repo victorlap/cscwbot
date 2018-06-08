@@ -143,9 +143,7 @@ class AddAgrumentConversation extends Conversation
                     ]
                 ]
             ]
-        ], function(Answer $answer) {
-            $this->firstname = $answer->getText();
-        });
+        ]);
     }
 
     public function askFirstname()
