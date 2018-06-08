@@ -5,17 +5,9 @@ namespace App\Http\Controllers;
 use App\Argument;
 use App\Discussion;
 use BotMan\BotMan\BotMan;
-use BotMan\BotMan\Exceptions\Base\BotManException;
-use BotMan\BotMan\Messages\Attachments\Attachment;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
-use BotMan\BotMan\Messages\Outgoing\Actions\Button;
-use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
-use BotMan\BotMan\Messages\Outgoing\Question;
-use BotMan\Drivers\Slack\Extensions\Menu;
-use Illuminate\Support\Facades\Log;
-use Slack\Message\Message;
 
 class AddArgumentController extends Controller
 {
@@ -59,7 +51,7 @@ class AskViewpointConversation extends Conversation
 
         $discussion = Discussion::where('discussion_channel', $this->channel)->first();
         if ($discussion->state !== 'add_arguments') {
-            $this->say('You need to be in round 1 to add arguments.');
+            $this->say('You need to be in round 1 to add arguments. Use `/round help` to see possible commands for this round.');
             return true;
         }
 
