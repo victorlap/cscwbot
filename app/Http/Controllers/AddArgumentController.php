@@ -118,14 +118,34 @@ class AddAgrumentConversation extends Conversation
 
     public function askForDatabase()
     {
-        $this->say('Hello', [
+        $this->ask('Hello', [
+            'text' => 'Would you like to play a game?',
             'attachments' => [
                 [
-                    'title' => 'Foo',
-                    'image_url' => 'https://brandfolder.com/slack/logo/slack-primary-logo.png'
+                    'text' => 'Choose a game to pla',
+                    'fallback' => 'You are unable to choose a game',
+                    'callback_id' => 'wopr_game',
+                    'color' => '#3AA3E3',
+                    'attachment_type' => 'default',
+                    'actions' => [
+                        [
+                            'name' => 'game',
+                            'text' => 'Chess',
+                            'type' => 'button',
+                            'value' => 'chess'
+                        ],
+                        [
+                            'name' => 'game',
+                            'text' => 'Chess',
+                            'type' => 'button',
+                            'value' => 'chess'
+                        ]
+                    ]
                 ]
             ]
-        ]);
+        ], function(Answer $answer) {
+            $this->firstname = $answer->getText();
+        });
     }
 
     public function askFirstname()
