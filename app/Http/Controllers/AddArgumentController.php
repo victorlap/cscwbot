@@ -6,6 +6,7 @@ use App\Argument;
 use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Exceptions\Base\BotManException;
 use BotMan\BotMan\Messages\Incoming\Answer;
+use BotMan\BotMan\Messages\Outgoing\Actions\Button;
 use BotMan\BotMan\Messages\Outgoing\Question;
 use BotMan\Drivers\Slack\Extensions\Menu;
 use Illuminate\Support\Facades\Log;
@@ -47,6 +48,24 @@ class AddArgumentController extends Controller
             $this->email = $answer->getText();
 
             $this->say('Great - that is all we need: ' . $this->email);
+        });
+
+        $question = Question::create('Do you need a database?')
+            ->fallback('Unable to create a new database')
+            ->callbackId('create_database')
+            ->addButtons([
+                Button::create('Of course')->value('yes'),
+                Button::create('Hell no!')->value('no'),
+            ]);
+
+        $this->botman->ask($question, function (Answer $answer) {
+            // Detect if button was clicked:
+            if ($answer->isInteractiveMessageReply()) {
+                $selectedValue = $answer->getValue(); // will be either 'yes' or 'no'
+                $selectedText = $answer->getText(); // will be either 'Of course' or 'Hell no!'
+
+                $this->say("Your choice: " + $selectedValue);
+            }
         });
 
     }
