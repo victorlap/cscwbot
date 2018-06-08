@@ -44,8 +44,39 @@ class AddArgumentController extends Controller
         $this->name = $name;
         $this->user = $bot->getUser();
 
-        $this->botman->startConversation(new AddAgrumentConversation);
+        try {
+            $this->botman->sendRequest('chat.postMessage', [
+                'text' => 'Would you like to play a game?',
+                'attachments' => [
+                    [
+                        'text' => 'Choose a game to pla',
+                        'fallback' => 'You are unable to choose a game',
+                        'callback_id' => 'wopr_game',
+                        'color' => '#3AA3E3',
+                        'attachment_type' => 'default',
+                        'actions' => [
+                            [
+                                'name' => 'game',
+                                'text' => 'Chess',
+                                'type' => 'button',
+                                'value' => 'chess'
+                            ],
+                            [
+                                'name' => 'game',
+                                'text' => 'Chess',
+                                'type' => 'button',
+                                'value' => 'chess'
+                            ]
+                        ]
+                    ]
+                ]
+            ]);
+        } catch (BotManException $exception) {
+            Log::error($exception->getMessage());
+        }
 
+//        $this->botman->startConversation(new AddAgrumentConversation);
+//
 //        $this->addArgument($viewpoint, $name);
 
 //        $this->botman->ask('One more thing - what is your email?', function(Answer $answer) {
@@ -118,7 +149,7 @@ class AddAgrumentConversation extends Conversation
 
     public function askForDatabase()
     {
-        $this->say('Hello', [
+        $this->say('Hello, please select the viewpoint that is applicable for your argument.', [
             'text' => 'Would you like to play a game?',
             'attachments' => [
                 [
