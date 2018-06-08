@@ -50,15 +50,55 @@ class AddArgumentController extends Controller
 //            $this->say('Great - that is all we need: ' . $this->email);
 //        });
 
-        $question = Question::create('Do you need a database?')
-            ->fallback('Unable to create a new database')
-            ->callbackId('create_database')
-            ->addButtons([
-                Button::create('Of course')->value('yes'),
-                Button::create('Hell no!')->value('no'),
-            ]);
+        $json_string = "{
+    \"text\": \"Would you like to play a game?\",
+    \"attachments\": [
+        {
+            \"text\": \"Choose a game to play\",
+            \"fallback\": \"You are unable to choose a game\",
+            \"callback_id\": \"wopr_game\",
+            \"color\": \"#3AA3E3\",
+            \"attachment_type\": \"default\",
+            \"actions\": [
+                {
+                    \"name\": \"game\",
+                    \"text\": \"Chess\",
+                    \"type\": \"button\",
+                    \"value\": \"chess\"
+                },
+                {
+                    \"name\": \"game\",
+                    \"text\": \"Falken's Maze\",
+                    \"type\": \"button\",
+                    \"value\": \"maze\"
+                },
+                {
+                    \"name\": \"game\",
+                    \"text\": \"Thermonuclear War\",
+                    \"style\": \"danger\",
+                    \"type\": \"button\",
+                    \"value\": \"war\",
+                    \"confirm\": {
+                        \"title\": \"Are you sure?\",
+                        \"text\": \"Wouldn't you prefer a good game of chess?\",
+                        \"ok_text\": \"Yes\",
+                        \"dismiss_text\": \"No\"
+                    }
+                }
+            ]
+        }
+    ]
+}";
 
-        $this->botman->ask($question, function (Answer $answer) {
+//        $question = Question::create('Do you need a database?')
+//            ->fallback('Unable to create a new database')
+//            ->callbackId('create_database')
+//            ->addButtons([
+//                Button::create('Of course')->value('yes'),
+//                Button::create('Hell no!')->value('no'),
+//            ]);
+
+        $this->botman->ask($json_string, function (Answer $answer) {
             // Detect if button was clicked:
             if ($answer->isInteractiveMessageReply()) {
                 $selectedValue = $answer->getValue(); // will be either 'yes' or 'no'
