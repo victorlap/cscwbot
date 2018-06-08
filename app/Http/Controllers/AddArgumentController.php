@@ -44,7 +44,7 @@ class AddArgumentController extends Controller
         $this->name = $name;
         $this->user = $bot->getUser();
 
-        $this->botman->startConversation(new OnboardingConversation);
+        $this->botman->startConversation(new AddAgrumentConversation);
 
 //        $this->addArgument($viewpoint, $name);
 
@@ -110,11 +110,30 @@ class AddArgumentController extends Controller
     }
 }
 
-class OnboardingConversation extends Conversation
+class AddAgrumentConversation extends Conversation
 {
     protected $firstname;
 
     protected $email;
+
+    public function askForDatabase()
+    {
+        $question = Question::create('Do you need a database?')
+            ->fallback('Unable to create a new database')
+            ->callbackId('create_database')
+            ->addButtons([
+                Button::create('Of course')->value('yes'),
+                Button::create('Hell no!')->value('no'),
+            ]);
+
+        $this->ask($question, function (Answer $answer) {
+            // Detect if button was clicked:
+            if ($answer->isInteractiveMessageReply()) {
+                $selectedValue = $answer->getValue(); // will be either 'yes' or 'no'
+                $selectedText = $answer->getText(); // will be either 'Of course' or 'Hell no!'
+            }
+        });
+    }
 
     public function askFirstname()
     {
@@ -140,6 +159,6 @@ class OnboardingConversation extends Conversation
     public function run()
     {
         // This will be called immediately
-        $this->askFirstname();
+        $this->askForDatabase();
     }
 }
