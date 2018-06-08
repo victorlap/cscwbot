@@ -43,12 +43,12 @@ class AddArgumentController extends Controller
 
 //        $this->addArgument($viewpoint, $name);
 
-        $this->botman->ask('One more thing - what is your email?', function(Answer $answer) {
-            // Save result
-            $this->email = $answer->getText();
-
-            $this->say('Great - that is all we need: ' . $this->email);
-        });
+//        $this->botman->ask('One more thing - what is your email?', function(Answer $answer) {
+//            // Save result
+//            $this->email = $answer->getText();
+//
+//            $this->say('Great - that is all we need: ' . $this->email);
+//        });
 
         $question = Question::create('Do you need a database?')
             ->fallback('Unable to create a new database')
@@ -64,7 +64,7 @@ class AddArgumentController extends Controller
                 $selectedValue = $answer->getValue(); // will be either 'yes' or 'no'
                 $selectedText = $answer->getText(); // will be either 'Of course' or 'Hell no!'
 
-                $this->say("Your choice: " + $selectedValue);
+                $this->say("Your choice: " . $selectedValue);
             }
         });
 
