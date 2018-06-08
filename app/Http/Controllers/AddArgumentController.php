@@ -98,7 +98,7 @@ class AddArgumentController extends Controller
 //                Button::create('Hell no!')->value('no'),
 //            ]);
 
-        $this->botman->ask(json_decode($json_string), function (Answer $answer) {
+        $this->botman->ask("Mooi werk?", function (Answer $answer) {
             // Detect if button was clicked:
             if ($answer->isInteractiveMessageReply()) {
                 $selectedValue = $answer->getValue(); // will be either 'yes' or 'no'
