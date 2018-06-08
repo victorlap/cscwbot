@@ -57,6 +57,12 @@ class AskViewpointConversation extends Conversation
     public function askViewpoint()
     {
 
+        $discussion = Discussion::where('discussion_channel', $this->channel)->first();
+        if ($discussion->state !== 'add_arguments') {
+            $this->say('You need to be in round 1 to add arguments.');
+            return true;
+        }
+
         $list = '';
         if ($this->first_attempt) {
             $list = ListViewpointsController::listViewpoints($this->channel);
