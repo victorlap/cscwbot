@@ -55,13 +55,15 @@ class AskViewpointConversation extends Conversation
     public function showViewpoints()
     {
         $this->say(ListViewpointsController::listViewpoints($this->channel));
+        $this->askViewpoint();
     }
 
     public function askViewpoint()
     {
-        $this->ask('Hello! What is the *ID* of the viewpoint for your argument?', function(Answer $answer) {
+        $this->ask('Hello! What is the ID of the viewpoint for your argument?', function(Answer $answer) {
             $this->viewpoint = $answer->getText();
             $this->say('OK! I\'ll add it to the list');
+            $this->addArgument();
         });
     }
 
@@ -98,7 +100,5 @@ class AskViewpointConversation extends Conversation
     public function run()
     {
         $this->showViewpoints();
-        $this->askViewpoint();
-        $this->addArgument();
     }
 }
