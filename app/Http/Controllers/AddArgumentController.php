@@ -43,7 +43,7 @@ class AddArgumentController extends Controller
 
         $this->botman->reply(ListViewpointsController::listViewpoints($this->botman->getMessage()->getRecipient()));
 
-        $this->ask('Hello! What is the *ID* of the viewpoint for your argument?', function(Answer $answer) {
+        $this->botman->ask('Hello! What is the *ID* of the viewpoint for your argument?', function(Answer $answer) {
             $this->addArgument($answer->getText());
         });
 

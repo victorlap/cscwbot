@@ -41,7 +41,7 @@ class ListViewpointsController extends Controller
         $viewpoints_string = '';
         foreach ($viewpoints as $viewpoint) {
             $viewpoints_string .= sprintf(
-                "ID: *%s* - *%s* by <@%s>",
+                "\nID: *%s* - *%s* by <@%s>",
                 $viewpoint->id,
                 $viewpoint->viewpoint,
                 $viewpoint->author
