@@ -52,17 +52,10 @@ class AskViewpointConversation extends Conversation
     protected $viewpoint;
     protected $author;
 
-    public function showViewpoints()
-    {
-        $this->say(ListViewpointsController::listViewpoints($this->channel));
-        $this->askViewpoint();
-    }
-
     public function askViewpoint()
     {
-        $this->ask('Hello! What is the ID of the viewpoint for your argument?', function(Answer $answer) {
+        $this->ask('Hello! What is the ID of the viewpoint for your argument? These are the viewpoints:' . ListViewpointsController::listViewpoints($this->channel), function(Answer $answer) {
             $this->viewpoint = $answer->getText();
-            $this->say('OK! I\'ll add it to the list');
             $this->addArgument();
         });
     }
