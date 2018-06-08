@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Argument;
 use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Exceptions\Base\BotManException;
+use BotMan\BotMan\Messages\Incoming\Answer;
+use BotMan\BotMan\Messages\Outgoing\Question;
+use BotMan\Drivers\Slack\Extensions\Menu;
 use Illuminate\Support\Facades\Log;
 
 class AddArgumentController extends Controller
