@@ -44,38 +44,7 @@ class AddArgumentController extends Controller
         $this->name = $name;
         $this->user = $bot->getUser();
 
-        try {
-            $this->botman->sendRequest('chat.postMessage', [
-                'text' => 'Would you like to play a game?',
-                'attachments' => [
-                    [
-                        'text' => 'Choose a game to pla',
-                        'fallback' => 'You are unable to choose a game',
-                        'callback_id' => 'wopr_game',
-                        'color' => '#3AA3E3',
-                        'attachment_type' => 'default',
-                        'actions' => [
-                            [
-                                'name' => 'game',
-                                'text' => 'Chess',
-                                'type' => 'button',
-                                'value' => 'chess'
-                            ],
-                            [
-                                'name' => 'game',
-                                'text' => 'Chess',
-                                'type' => 'button',
-                                'value' => 'chess'
-                            ]
-                        ]
-                    ]
-                ]
-            ]);
-        } catch (BotManException $exception) {
-            Log::error($exception->getMessage());
-        }
-
-//        $this->botman->startConversation(new AddAgrumentConversation);
+        $this->botman->startConversation(new AddAgrumentConversation);
 //
 //        $this->addArgument($viewpoint, $name);
 
@@ -167,14 +136,16 @@ class AddAgrumentConversation extends Conversation
                         ],
                         [
                             'name' => 'game',
-                            'text' => 'Chess',
+                            'text' => 'Other',
                             'type' => 'button',
-                            'value' => 'chess'
+                            'value' => 'test'
                         ]
                     ]
                 ]
             ]
         ]);
+
+
     }
 
     public function askFirstname()
