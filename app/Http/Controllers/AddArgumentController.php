@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Argument;
+use App\Discussion;
 use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Exceptions\Base\BotManException;
 use BotMan\BotMan\Messages\Attachments\Attachment;
@@ -26,7 +27,7 @@ class AddArgumentController extends Controller
 
     protected $viewpoint;
 
-    protected $name;
+    protected $argument;
 
     protected $channel;
 
@@ -34,71 +35,32 @@ class AddArgumentController extends Controller
 
     /**
      * @param BotMan $bot
-     * @param string $viewpoint
-     * @param string $name
+     * @param string $argument
      */
-    public function __invoke($bot, $viewpoint, $name)
+    public function __invoke($bot, $argument)
     {
         $this->botman = $bot;
-        $this->viewpoint = $viewpoint;
-        $this->name = $name;
+        $this->argument = $argument;
         $this->user = $bot->getUser();
 
-        $this->botman->startConversation(new AddAgrumentConversation);
-//
-//        $this->addArgument($viewpoint, $name);
-
-//        $this->botman->ask('One more thing - what is your email?', function(Answer $answer) {
-//            // Save result
-//            $this->email = $answer->getText();
-//
-//            $this->say('Great - that is all we need: ' . $this->email);
-//        });
-
-//        try {
-//            $question = Question::create('Do you need a database?')
-//                ->fallback('Unable to create a new database')
-//                ->callbackId('create_database')
-//                ->addButtons([
-//                    Button::create('Of course')->value('yes'),
-//                    Button::create('Hell no!')->value('no'),
-//                ]);
-//
-//            $response = $this->botman->sendRequest('chat.postMessage', $question);
-//            Log::debug(json_decode($response));
-//        } catch (BotManException $exception) {
-//            Log::error($exception->getMessage());
-//        }
-
-//        $this->botman->say("Your choice: " . json_decode($response));
-//
-//        $this->botman->ask("Mooi werk?", function (Answer $answer) {
-//            // Detect if button was clicked:
-//            if ($answer->isInteractiveMessageReply()) {
-//                $selectedValue = $answer->getValue(); // will be either 'yes' or 'no'
-//                $selectedText = $answer->getText(); // will be either 'Of course' or 'Hell no!'
-//
-//                $this->say("Your choice: " . $selectedText);
-//            }
-//        });
-
+        $result = $this->botman->startConversation(new AddArgumentConversation);
+        $this->addArgument($result, $argument);
     }
 
-    public function addArgument($viewpoint, $name)
+    public function addArgument($viewpoint, $argument)
     {
-
         Argument::create([
-            'argument' => $name,
+            'argument' => $argument,
             'viewpoint_id' => $viewpoint,
             'author' => $this->user->getUsername()
         ]);
 
         try {
-            $this->botman->say(
+            $this->say(
                 sprintf(
                     "<@%s> added an argument: \"%s\" for viewpoint %s.",
                     $this->user->getUsername(),
-                    $this->name,
+                    $this->argument,
                     $viewpoint
                 ),
                 $this->botman->getMessage()->getRecipient()
@@ -106,72 +68,49 @@ class AddArgumentController extends Controller
         } catch (BotManException $exception) {
             Log::error($exception->getMessage());
         }
-
     }
 }
 
-class AddAgrumentConversation extends Conversation
+class AddArgumentConversation extends Conversation
 {
-    protected $firstname;
+    protected $viewpoint;
 
-    protected $email;
-
-    public function askForDatabase()
+    public function showViewpoints()
     {
-        $this->say('Hello, please select the viewpoint that is applicable for your argument.', [
-            'text' => 'Would you like to play a game?',
-            'attachments' => [
-                [
-                    'text' => 'Choose a game to pla',
-                    'fallback' => 'You are unable to choose a game',
-                    'callback_id' => 'wopr_game',
-                    'color' => '#3AA3E3',
-                    'attachment_type' => 'default',
-                    'actions' => [
-                        [
-                            'name' => 'game',
-                            'text' => 'Chess',
-                            'type' => 'button',
-                            'value' => 'chess'
-                        ],
-                        [
-                            'name' => 'game',
-                            'text' => 'Other',
-                            'type' => 'button',
-                            'value' => 'test'
-                        ]
-                    ]
-                ]
-            ]
-        ]);
 
+        $discussion = Discussion::where('discussion_channel', $this->getMessage()->getRecipient())->first();
+        $viewpoints = $discussion->viewpoints;
+        $viewpoints_string = '';
+        foreach ($viewpoints as $viewpoint) {
+            $viewpoints_string .= sprintf(
+                "ID: *%s* - *%s* by <@%s>",
+                $viewpoint->id,
+                $viewpoint->viewpoint,
+                $viewpoint->author
+            );
+        }
 
+        $this->say(
+            sprintf(
+                "The viewpoints (%s) are: %s.",
+                $viewpoints->count(),
+                $viewpoints_string
+            )
+        );
     }
 
-    public function askFirstname()
+    public function askViewpoint()
     {
-        $this->ask('Hello! What is your firstname?', function(Answer $answer) {
+        $this->ask('Hello! What is the *ID* of the viewpoint for your argument?', function(Answer $answer) {
             // Save result
-            $this->firstname = $answer->getText();
-
-            $this->say('Nice to meet you '.$this->firstname);
-            $this->askEmail();
-        });
-    }
-
-    public function askEmail()
-    {
-        $this->ask('One more thing - what is your email?', function(Answer $answer) {
-            // Save result
-            $this->email = $answer->getText();
-
-            $this->say('Great - that is all we need, '.$this->firstname);
+            return $answer->getText();
         });
     }
 
     public function run()
     {
         // This will be called immediately
-        $this->askForDatabase();
+        $this->showViewpoints();
+        $this->askViewpoint();
     }
 }
