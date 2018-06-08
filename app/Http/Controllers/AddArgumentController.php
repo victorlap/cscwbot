@@ -43,10 +43,8 @@ class AddArgumentController extends Controller
 
         $this->botman->reply(ListViewpointsController::listViewpoints($this->botman->getMessage()->getRecipient()));
 
-        $this->botman->ask('Hello! What is the *ID* of the viewpoint for your argument?', function(Answer $answer) {
-            $this->addArgument($answer->getText());
-        });
-
+        $conversation = new AskViewpointConversation($argument);
+        $this->addArgument($conversation->getViepoint());
     }
 
     public function addArgument($viewpoint)
@@ -70,5 +68,31 @@ class AddArgumentController extends Controller
         } catch (BotManException $exception) {
             Log::error($exception->getMessage());
         }
+    }
+}
+
+class AskViewpointConversation extends Conversation
+{
+    protected $argument;
+    protected $viewpoint;
+
+    public function askViewpoint()
+    {
+        $this->ask('Hello! What is the *ID* of the viewpoint for your argument?', function(Answer $answer) {
+            $this->viewpoint = $answer->getText();
+        });
+    }
+
+    public function getViepoint() {
+        return $this->viewpoint;
+    }
+
+    public function __construct($argument) {
+        $this->argument = $argument;
+    }
+
+    public function run()
+    {
+        $this->askViewpoint();
     }
 }

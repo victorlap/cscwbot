@@ -50,7 +50,7 @@ class ListViewpointsController extends Controller
 
         return (
             sprintf(
-                "There are %s viewpoint(s) for this discussion. The viewpoints are: %s",
+                "There are %s viewpoints for this discussion. The viewpoints are: %s",
                 $viewpoints->count(),
                 $viewpoints_string
             )
