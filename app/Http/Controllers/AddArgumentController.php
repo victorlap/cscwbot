@@ -34,7 +34,34 @@ class AddArgumentController extends Controller
         $this->name = $name;
         $this->user = $bot->getUser();
 
-        $this->addArgument($viewpoint, $name);
+//        $this->addArgument($viewpoint, $name);
+
+        // Inside your conversation
+        $question = Question::create('Would you like to play a game?')
+            ->callbackId('game_selection')
+            ->addAction(
+                Menu::create('Pick a game...')
+                    ->name('games_list')
+                    ->options([
+                        [
+                            'text' => 'Hearts',
+                            'value' => 'hearts',
+                        ],
+                        [
+                            'text' => 'Bridge',
+                            'value' => 'bridge',
+                        ],
+                        [
+                            'text' => 'Poker',
+                            'value' => 'poker',
+                        ]
+                    ])
+            );
+
+        $this->ask($question, function (Answer $answer) {
+            $selectedOptions = $answer->getValue();
+        });
+
     }
 
     public function addArgument($viewpoint, $name)
