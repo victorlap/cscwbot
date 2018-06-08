@@ -118,7 +118,7 @@ class AddAgrumentConversation extends Conversation
 
     public function askForDatabase()
     {
-        $this->ask('Hello', [
+        $this->say('Hello', [
             'text' => 'Would you like to play a game?',
             'attachments' => [
                 [
