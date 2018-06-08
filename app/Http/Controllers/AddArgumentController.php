@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Argument;
 use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Exceptions\Base\BotManException;
+use BotMan\BotMan\Messages\Attachments\Attachment;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Outgoing\Actions\Button;
+use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
 use BotMan\BotMan\Messages\Outgoing\Question;
 use BotMan\Drivers\Slack\Extensions\Menu;
 use Illuminate\Support\Facades\Log;
@@ -50,63 +52,25 @@ class AddArgumentController extends Controller
 //            $this->say('Great - that is all we need: ' . $this->email);
 //        });
 
-        $json_string = "{
-    \"text\": \"Would you like to play a game?\",
-    \"attachments\": [
-        {
-            \"text\": \"Choose a game to play\",
-            \"fallback\": \"You are unable to choose a game\",
-            \"callback_id\": \"wopr_game\",
-            \"color\": \"#3AA3E3\",
-            \"attachment_type\": \"default\",
-            \"actions\": [
-                {
-                    \"name\": \"game\",
-                    \"text\": \"Chess\",
-                    \"type\": \"button\",
-                    \"value\": \"chess\"
-                },
-                {
-                    \"name\": \"game\",
-                    \"text\": \"Falken's Maze\",
-                    \"type\": \"button\",
-                    \"value\": \"maze\"
-                },
-                {
-                    \"name\": \"game\",
-                    \"text\": \"Thermonuclear War\",
-                    \"style\": \"danger\",
-                    \"type\": \"button\",
-                    \"value\": \"war\",
-                    \"confirm\": {
-                        \"title\": \"Are you sure?\",
-                        \"text\": \"Wouldn't you prefer a good game of chess?\",
-                        \"ok_text\": \"Yes\",
-                        \"dismiss_text\": \"No\"
-                    }
-                }
-            ]
+        try {
+            $this->botman->sendRequest('chat.PostMessage', [
+                'text' => 'Want to play a game?',
+            ]);
+        } catch (BotManException $exception) {
+            Log::error($exception->getMessage());
         }
-    ]
-}";
 
-//        $question = Question::create('Do you need a database?')
-//            ->fallback('Unable to create a new database')
-//            ->callbackId('create_database')
-//            ->addButtons([
-//                Button::create('Of course')->value('yes'),
-//                Button::create('Hell no!')->value('no'),
-//            ]);
-
-        $this->botman->ask("Mooi werk?", function (Answer $answer) {
-            // Detect if button was clicked:
-            if ($answer->isInteractiveMessageReply()) {
-                $selectedValue = $answer->getValue(); // will be either 'yes' or 'no'
-                $selectedText = $answer->getText(); // will be either 'Of course' or 'Hell no!'
-
-                $this->say("Your choice: " . $selectedValue);
-            }
-        });
+//        $this->botman->say("Your choice: " . json_decode($response));
+//
+//        $this->botman->ask("Mooi werk?", function (Answer $answer) {
+//            // Detect if button was clicked:
+//            if ($answer->isInteractiveMessageReply()) {
+//                $selectedValue = $answer->getValue(); // will be either 'yes' or 'no'
+//                $selectedText = $answer->getText(); // will be either 'Of course' or 'Hell no!'
+//
+//                $this->say("Your choice: " . $selectedText);
+//            }
+//        });
 
     }
 
