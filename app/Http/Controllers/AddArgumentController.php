@@ -53,7 +53,7 @@ class AddArgumentController extends Controller
 //        });
 
         try {
-            $this->botman->sendRequest('chat.PostMessage', [
+            $this->botman->sendRequest('chat.postMessage', [
                 'text' => 'Want to play a game?',
             ]);
         } catch (BotManException $exception) {
