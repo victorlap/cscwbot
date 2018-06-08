@@ -41,42 +41,21 @@ class AddArgumentController extends Controller
         $this->argument = $argument;
         $this->user = $bot->getUser();
 
-        $this->botman->reply(ListViewpointsController::listViewpoints($this->botman->getMessage()->getRecipient()));
-
-        $conversation = new AskViewpointConversation;
-        $this->botman->startConversation($conversation);
-//        $this->addArgument($conversation->getViewpoint());
-    }
-
-
-
-    public function addArgument($viewpoint)
-    {
-        Argument::create([
-            'argument' => $this->argument,
-            'viewpoint_id' => $viewpoint,
-            'author' => $this->user->getUsername()
-        ]);
-
-        try {
-            $this->botman->say(
-                sprintf(
-                    "<@%s> added an argument: \"%s\" for viewpoint %s.",
-                    $this->user->getUsername(),
-                    $this->argument,
-                    $viewpoint
-                ),
-                $this->botman->getMessage()->getRecipient()
-            );
-        } catch (BotManException $exception) {
-            Log::error($exception->getMessage());
-        }
+        $this->botman->startConversation(new AskViewpointConversation($this->botman->getMessage()->getRecipient(), $argument, $bot->getUser()));
     }
 }
 
 class AskViewpointConversation extends Conversation
 {
+    protected $channel;
+    protected $argument;
     protected $viewpoint;
+    protected $author;
+
+    public function showViewpoints()
+    {
+        $this->say(ListViewpointsController::listViewpoints($this->channel));
+    }
 
     public function askViewpoint()
     {
@@ -86,12 +65,40 @@ class AskViewpointConversation extends Conversation
         });
     }
 
-    public function getViewpoint() {
-        return $this->viewpoint;
+    public function addArgument()
+    {
+        Argument::create([
+            'argument' => $this->argument,
+            'viewpoint_id' => $this->viewpoint,
+            'author' => $this->author->getUsername()
+        ]);
+
+        try {
+            $this->say(
+                sprintf(
+                    "<@%s> added an argument: \"%s\" for viewpoint %s.",
+                    $this->author->getUsername(),
+                    $this->argument,
+                    $this->viewpoint
+                ),
+                $this->channel
+            );
+        } catch (BotManException $exception) {
+            Log::error($exception->getMessage());
+        }
+    }
+
+
+    public function __construct($channel, $argument, $author) {
+        $this->channel = $channel;
+        $this->argument = $argument;
+        $this->author = $author;
     }
 
     public function run()
     {
+        $this->showViewpoints();
         $this->askViewpoint();
+        $this->addArgument();
     }
 }
