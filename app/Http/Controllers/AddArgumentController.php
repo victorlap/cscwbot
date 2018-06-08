@@ -53,9 +53,15 @@ class AddArgumentController extends Controller
 //        });
 
         try {
-            $response = $this->bot->sendRequest('chat.postMessage', [
-                'text' => 'Want to play a game?',
-            ]);
+            $question = Question::create('Do you need a database?')
+                ->fallback('Unable to create a new database')
+                ->callbackId('create_database')
+                ->addButtons([
+                    Button::create('Of course')->value('yes'),
+                    Button::create('Hell no!')->value('no'),
+                ]);
+
+            $response = $this->botman->sendRequest('chat.postMessage', $question);
             Log::debug(json_decode($response));
         } catch (BotManException $exception) {
             Log::error($exception->getMessage());
