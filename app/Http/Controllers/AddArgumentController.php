@@ -9,6 +9,7 @@ use BotMan\BotMan\Exceptions\Base\BotManException;
 use BotMan\BotMan\Messages\Attachments\Attachment;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
+use BotMan\BotMan\Messages\Incoming\IncomingMessage;
 use BotMan\BotMan\Messages\Outgoing\Actions\Button;
 use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
 use BotMan\BotMan\Messages\Outgoing\Question;
@@ -61,7 +62,7 @@ class AskViewpointConversation extends Conversation
             $list = ListViewpointsController::listViewpoints($this->channel);
         }
 
-        $this->ask('Hello! What is the ID of the viewpoint for your argument? ' . $list, function(Answer $answer) {
+        $this->ask('What is the ID of the viewpoint for your argument? ' . $list . '\n type `stop` if you want to cancel.', function(Answer $answer) {
             $this->viewpoint = $answer->getText();
             $this->addArgument();
         });
@@ -101,6 +102,15 @@ class AskViewpointConversation extends Conversation
             $this->say("Invalid ID, try again.");
             $this->askViewpoint();
         }
+    }
+
+    public function stopsConversation(IncomingMessage $message)
+    {
+        if ($message->getText() == 'stop') {
+            return true;
+        }
+
+        return false;
     }
 
     public function __construct($channel, $argument, $author) {
