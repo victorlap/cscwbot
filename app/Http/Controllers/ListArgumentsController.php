@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Argument;
 use App\Discussion;
+use App\Viewpoint;
 use BotMan\BotMan\BotMan;
 
 class ListArgumentsController extends Controller
@@ -37,7 +39,8 @@ class ListArgumentsController extends Controller
         $viewpoints_string = '';
         foreach ($viewpoints as $viewpoint) {
             $arguments_string = '';
-            foreach ($viewpoint->arguments as $argument) {
+            $viewpoint_arguments = Argument::where('viewpoint_id', $viewpoint->id)->get();
+            foreach ($viewpoint_arguments as $argument) {
                 $arguments_string .= sprintf(
                     "\n%s",
                     $argument->argument
