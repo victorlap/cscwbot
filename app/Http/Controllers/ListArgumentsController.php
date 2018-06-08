@@ -42,12 +42,12 @@ class ListArgumentsController extends Controller
             $viewpoint_arguments = Argument::where('viewpoint_id', $viewpoint->id)->get();
             foreach ($viewpoint_arguments as $argument) {
                 $arguments_string .= sprintf(
-                    "\n%s",
+                    "\n• %s",
                     $argument->argument
                 );
             }
             $viewpoints_string .= sprintf(
-                "\n*%s*, supporting arguments: %s",
+                "\n*%s*, supporting arguments: %s\n",
                 $viewpoint->viewpoint,
                 $arguments_string
             );
