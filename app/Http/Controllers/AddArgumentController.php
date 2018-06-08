@@ -74,8 +74,7 @@ class AskViewpointConversation extends Conversation
                 'test',
                 $this->argument,
                 $this->viewpoint
-            ),
-            $this->channel
+            )
         );
         return true;
     }
