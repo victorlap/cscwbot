@@ -51,10 +51,14 @@ class AskViewpointConversation extends Conversation
     protected $argument;
     protected $viewpoint;
     protected $author;
+    protected $first_attempt = true;
 
     public function askViewpoint()
     {
-        $this->ask('Hello! What is the ID of the viewpoint for your argument? ' . ListViewpointsController::listViewpoints($this->channel), function(Answer $answer) {
+        $this->ask('Hello! What is the ID of the viewpoint for your argument?', function(Answer $answer) {
+            if ($this->first_attempt) {
+                $this->say(ListViewpointsController::listViewpoints($this->channel));
+            }
             $this->viewpoint = $answer->getText();
             $this->addArgument();
         });
@@ -62,21 +66,38 @@ class AskViewpointConversation extends Conversation
 
     public function addArgument()
     {
-        Argument::create([
-            'argument' => $this->argument,
-            'viewpoint_id' => $this->viewpoint,
-            'author' => $this->author->getUsername()
-        ]);
 
-        $this->say(
-            sprintf(
-                "<@%s> added an argument: \"%s\" for viewpoint %s.",
-                'test',
-                $this->argument,
-                $this->viewpoint
-            )
-        );
-        return true;
+        // Request possible IDs
+        $discussion = Discussion::where('discussion_channel', $this->channel)->first();
+        $viewpoints = $discussion->viewpoints;
+        $viewpoints_array = [];
+
+        foreach ($viewpoints as $viewpoint) {
+            array_push($viewpoints_array, $viewpoint->id);
+        }
+
+        if (in_array($this->viewpoint, $viewpoints_array)) {
+
+            Argument::create([
+                'argument' => $this->argument,
+                'viewpoint_id' => $this->viewpoint,
+                'author' => $this->author->getUsername()
+            ]);
+
+            $this->say(
+                sprintf(
+                    "<@%s> added an argument: \"%s\" for viewpoint %s.",
+                    $this->author->getUsername(),
+                    $this->argument,
+                    $this->viewpoint
+                )
+            );
+            return true;
+        } else {
+            $this->first_attempt = false;
+            $this->say("Invalid ID, try again.");
+            $this->askViewpoint();
+        }
     }
 
     public function __construct($channel, $argument, $author) {
