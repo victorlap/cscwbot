@@ -25,7 +25,7 @@ class ListArgumentsController extends Controller
         $this->botman = $bot;
         $this->user = $bot->getUser();
 
-        $this->botman->reply($this->listViewpoints($this->botman->getMessage()->getRecipient()));
+        $this->botman->reply($this->listArguments($this->botman->getMessage()->getRecipient()));
 
     }
 
