@@ -62,7 +62,7 @@ class AskViewpointConversation extends Conversation
             $list = ListViewpointsController::listViewpoints($this->channel);
         }
 
-        $this->ask('What is the ID of the viewpoint for your argument? ' . $list . '\n type `stop` if you want to cancel.', function(Answer $answer) {
+        $this->ask(sprintf('What is the ID of the viewpoint for your argument? ' . $list . ' \nType `stop` if you want to cancel.'), function(Answer $answer) {
             $this->viewpoint = $answer->getText();
             $this->addArgument();
         });
