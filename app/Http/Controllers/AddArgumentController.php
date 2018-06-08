@@ -56,7 +56,7 @@ class AddArgumentController extends Controller
             $response = $this->botman->sendRequest('chat.postMessage', [
                 'text' => 'Want to play a game?',
             ]);
-            Log::debug($response);
+            Log::debug(json_decode($response));
         } catch (BotManException $exception) {
             Log::error($exception->getMessage());
         }
