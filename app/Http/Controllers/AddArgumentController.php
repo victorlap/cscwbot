@@ -51,14 +51,14 @@ class AskViewpointConversation extends Conversation
     protected $argument;
     protected $viewpoint;
     protected $author;
-    protected $first_attempt = true;
+
+    public function showViewpoints() {
+        $this->say(ListViewpointsController::listViewpoints($this->channel));
+    }
 
     public function askViewpoint()
     {
         $this->ask('Hello! What is the ID of the viewpoint for your argument?', function(Answer $answer) {
-            if ($this->first_attempt) {
-                $this->say(ListViewpointsController::listViewpoints($this->channel));
-            }
             $this->viewpoint = $answer->getText();
             $this->addArgument();
         });
@@ -94,7 +94,6 @@ class AskViewpointConversation extends Conversation
             );
             return true;
         } else {
-            $this->first_attempt = false;
             $this->say("Invalid ID, try again.");
             $this->askViewpoint();
         }
@@ -108,6 +107,6 @@ class AskViewpointConversation extends Conversation
 
     public function run()
     {
-        $this->askViewpoint();
+        $this->showViewpoints();
     }
 }
