@@ -118,13 +118,26 @@ class AddAgrumentConversation extends Conversation
 
     public function askForDatabase()
     {
-        $question = Question::create('Do you need a database?')
-            ->fallback('Unable to create a new database')
-            ->callbackId('create_database')
-            ->addButtons([
-                Button::create('Of course')->value('yes'),
-                Button::create('Hell no!')->value('no'),
-            ]);
+        $question = Question::create('Would you like to play a game?')
+            ->callbackId('game_selection')
+            ->addAction(
+                Menu::create('Pick a game...')
+                    ->name('games_list')
+                    ->options([
+                        [
+                            'text' => 'Hearts',
+                            'value' => 'hearts',
+                        ],
+                        [
+                            'text' => 'Bridge',
+                            'value' => 'bridge',
+                        ],
+                        [
+                            'text' => 'Poker',
+                            'value' => 'poker',
+                        ]
+                    ])
+            );
 
         $this->ask($question, function (Answer $answer) {
             // Detect if button was clicked:
