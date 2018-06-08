@@ -118,34 +118,14 @@ class AddAgrumentConversation extends Conversation
 
     public function askForDatabase()
     {
-        $question = Question::create('Would you like to play a game?')
-            ->callbackId('game_selection')
-            ->addAction(
-                Menu::create('Pick a game...')
-                    ->name('games_list')
-                    ->options([
-                        [
-                            'text' => 'Hearts',
-                            'value' => 'hearts',
-                        ],
-                        [
-                            'text' => 'Bridge',
-                            'value' => 'bridge',
-                        ],
-                        [
-                            'text' => 'Poker',
-                            'value' => 'poker',
-                        ]
-                    ])
-            );
-
-        $this->ask($question, function (Answer $answer) {
-            // Detect if button was clicked:
-            if ($answer->isInteractiveMessageReply()) {
-                $selectedValue = $answer->getValue(); // will be either 'yes' or 'no'
-                $selectedText = $answer->getText(); // will be either 'Of course' or 'Hell no!'
-            }
-        });
+        $this->say('Hello', [
+            'attachments' => json_encode([
+                [
+                    'title' => 'Foo',
+                    'image_url' => 'https://brandfolder.com/slack/logo/slack-primary-logo.png'
+                ]
+            ])
+        ]);
     }
 
     public function askFirstname()
