@@ -44,8 +44,10 @@ class AddArgumentController extends Controller
         $this->botman->reply(ListViewpointsController::listViewpoints($this->botman->getMessage()->getRecipient()));
 
         $conversation = new AskViewpointConversation($argument);
-        $this->addArgument($conversation->getViepoint());
+//        $this->addArgument($conversation->getViewpoint());
     }
+
+    
 
     public function addArgument($viewpoint)
     {
@@ -83,7 +85,7 @@ class AskViewpointConversation extends Conversation
         });
     }
 
-    public function getViepoint() {
+    public function getViewpoint() {
         return $this->viewpoint;
     }
 
