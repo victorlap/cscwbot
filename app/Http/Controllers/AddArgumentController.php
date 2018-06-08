@@ -9,6 +9,7 @@ use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Outgoing\Question;
 use BotMan\Drivers\Slack\Extensions\Menu;
 use Illuminate\Support\Facades\Log;
+use Slack\Message\Message;
 
 class AddArgumentController extends Controller
 {
@@ -25,6 +26,8 @@ class AddArgumentController extends Controller
 
     protected $channel;
 
+    protected $email;
+
     /**
      * @param BotMan $bot
      * @param string $viewpoint
@@ -39,32 +42,11 @@ class AddArgumentController extends Controller
 
 //        $this->addArgument($viewpoint, $name);
 
-        // Inside your conversation
-        $question = Question::create('Would you like to play a game?')
-            ->callbackId('game_selection')
-            ->addAction(
-                Menu::create('Pick a game...')
-                    ->name('games_list')
-                    ->options([
-                        [
-                            'text' => 'Hearts',
-                            'value' => 'hearts',
-                        ],
-                        [
-                            'text' => 'Bridge',
-                            'value' => 'bridge',
-                        ],
-                        [
-                            'text' => 'Poker',
-                            'value' => 'poker',
-                        ]
-                    ])
-            );
+        $this->botman->ask('One more thing - what is your email?', function(Answer $answer) {
+            // Save result
+            $this->email = $answer->getText();
 
-        $vart = "{\n    \"text\": \"Would you like to play a game?\",\n    \"attachments\": [\n        {\n            \"text\": \"Choose a game to play\",\n            \"fallback\": \"You are unable to choose a game\",\n            \"callback_id\": \"wopr_game\",\n            \"color\": \"#3AA3E3\",\n            \"attachment_type\": \"default\",\n            \"actions\": [\n                {\n                    \"name\": \"game\",\n                    \"text\": \"Chess\",\n                    \"type\": \"button\",\n                    \"value\": \"chess\"\n                },\n                {\n                    \"name\": \"game\",\n                    \"text\": \"Falken's Maze\",\n                    \"type\": \"button\",\n                    \"value\": \"maze\"\n                },\n                {\n                    \"name\": \"game\",\n                    \"text\": \"Thermonuclear War\",\n                    \"style\": \"danger\",\n                    \"type\": \"button\",\n                    \"value\": \"war\",\n                    \"confirm\": {\n                        \"title\": \"Are you sure?\",\n                        \"text\": \"Wouldn't you prefer a good game of chess?\",\n                        \"ok_text\": \"Yes\",\n                        \"dismiss_text\": \"No\"\n                    }\n                }\n            ]\n        }\n    ]\n}";
-
-        $this->botman->ask($vart, function (Answer $answer) {
-            $selectedOptions = $answer->getValue();
+            $this->botman->say('Great - that is all we need: ' . $this->email);
         });
 
     }
