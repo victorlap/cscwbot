@@ -6,6 +6,7 @@ use App\Argument;
 use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Exceptions\Base\BotManException;
 use BotMan\BotMan\Messages\Attachments\Attachment;
+use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Outgoing\Actions\Button;
 use BotMan\BotMan\Messages\Outgoing\OutgoingMessage;
@@ -43,6 +44,8 @@ class AddArgumentController extends Controller
         $this->name = $name;
         $this->user = $bot->getUser();
 
+        $this->botman->startConversation(new OnboardingConversation);
+
 //        $this->addArgument($viewpoint, $name);
 
 //        $this->botman->ask('One more thing - what is your email?', function(Answer $answer) {
@@ -52,20 +55,20 @@ class AddArgumentController extends Controller
 //            $this->say('Great - that is all we need: ' . $this->email);
 //        });
 
-        try {
-            $question = Question::create('Do you need a database?')
-                ->fallback('Unable to create a new database')
-                ->callbackId('create_database')
-                ->addButtons([
-                    Button::create('Of course')->value('yes'),
-                    Button::create('Hell no!')->value('no'),
-                ]);
-
-            $response = $this->botman->sendRequest('chat.postMessage', $question);
-            Log::debug(json_decode($response));
-        } catch (BotManException $exception) {
-            Log::error($exception->getMessage());
-        }
+//        try {
+//            $question = Question::create('Do you need a database?')
+//                ->fallback('Unable to create a new database')
+//                ->callbackId('create_database')
+//                ->addButtons([
+//                    Button::create('Of course')->value('yes'),
+//                    Button::create('Hell no!')->value('no'),
+//                ]);
+//
+//            $response = $this->botman->sendRequest('chat.postMessage', $question);
+//            Log::debug(json_decode($response));
+//        } catch (BotManException $exception) {
+//            Log::error($exception->getMessage());
+//        }
 
 //        $this->botman->say("Your choice: " . json_decode($response));
 //
@@ -104,5 +107,39 @@ class AddArgumentController extends Controller
             Log::error($exception->getMessage());
         }
 
+    }
+}
+
+class OnboardingConversation extends Conversation
+{
+    protected $firstname;
+
+    protected $email;
+
+    public function askFirstname()
+    {
+        $this->ask('Hello! What is your firstname?', function(Answer $answer) {
+            // Save result
+            $this->firstname = $answer->getText();
+
+            $this->say('Nice to meet you '.$this->firstname);
+            $this->askEmail();
+        });
+    }
+
+    public function askEmail()
+    {
+        $this->ask('One more thing - what is your email?', function(Answer $answer) {
+            // Save result
+            $this->email = $answer->getText();
+
+            $this->say('Great - that is all we need, '.$this->firstname);
+        });
+    }
+
+    public function run()
+    {
+        // This will be called immediately
+        $this->askFirstname();
     }
 }
