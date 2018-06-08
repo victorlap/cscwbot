@@ -46,7 +46,7 @@ class AddArgumentController extends Controller
             // Save result
             $this->email = $answer->getText();
 
-            $this->botman->say('Great - that is all we need: ' . $this->email);
+            $this->say('Great - that is all we need: ' . $this->email);
         });
 
     }
