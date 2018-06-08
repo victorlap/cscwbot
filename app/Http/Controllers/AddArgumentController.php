@@ -119,12 +119,12 @@ class AddAgrumentConversation extends Conversation
     public function askForDatabase()
     {
         $this->say('Hello', [
-            'attachments' => json_encode([
+            'attachments' => [
                 [
                     'title' => 'Foo',
                     'image_url' => 'https://brandfolder.com/slack/logo/slack-primary-logo.png'
                 ]
-            ])
+            ]
         ]);
     }
 
