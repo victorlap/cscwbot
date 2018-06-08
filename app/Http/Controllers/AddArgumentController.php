@@ -68,21 +68,16 @@ class AskViewpointConversation extends Conversation
             'author' => $this->author->getUsername()
         ]);
 
+        $this->say(
+            sprintf(
+                "<@%s> added an argument: \"%s\" for viewpoint %s.",
+                'test',
+                $this->argument,
+                $this->viewpoint
+            ),
+            $this->channel
+        );
         return true;
-
-//        try {
-//            $this->say(
-//                sprintf(
-//                    "<@%s> added an argument: \"%s\" for viewpoint %s.",
-//                    'test',
-//                    $this->argument,
-//                    $this->viewpoint
-//                ),
-//                $this->channel
-//            );
-//        } catch (BotManException $exception) {
-//            Log::error($exception->getMessage());
-//        }
     }
 
     public function __construct($channel, $argument, $author) {
