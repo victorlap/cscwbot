@@ -35,9 +35,6 @@ class ListViewpointsController extends Controller
 
         $discussion = Discussion::where('discussion_channel', $channel)->first();
         $viewpoints = $discussion->viewpoints;
-
-        Log::debug('Number of viewpoints =  ' . $viewpoints->count());
-
         $viewpoints_string = '';
         foreach ($viewpoints as $viewpoint) {
             $viewpoints_string .= sprintf(
@@ -50,8 +47,7 @@ class ListViewpointsController extends Controller
 
         return (
             sprintf(
-                "There are %s viewpoints for this discussion. The viewpoints are: %s",
-                $viewpoints->count(),
+                "The viewpoints are: %s",
                 $viewpoints_string
             )
         );

@@ -54,7 +54,7 @@ class AskViewpointConversation extends Conversation
 
     public function askViewpoint()
     {
-        $this->ask('Hello! What is the ID of the viewpoint for your argument? These are the viewpoints:' . ListViewpointsController::listViewpoints($this->channel), function(Answer $answer) {
+        $this->ask('Hello! What is the ID of the viewpoint for your argument? ' . ListViewpointsController::listViewpoints($this->channel), function(Answer $answer) {
             $this->viewpoint = $answer->getText();
             $this->addArgument();
         });
@@ -68,21 +68,22 @@ class AskViewpointConversation extends Conversation
             'author' => $this->author->getUsername()
         ]);
 
-        try {
-            $this->say(
-                sprintf(
-                    "<@%s> added an argument: \"%s\" for viewpoint %s.",
-                    $this->author->getUsername(),
-                    $this->argument,
-                    $this->viewpoint
-                ),
-                $this->channel
-            );
-        } catch (BotManException $exception) {
-            Log::error($exception->getMessage());
-        }
-    }
+        return true;
 
+//        try {
+//            $this->say(
+//                sprintf(
+//                    "<@%s> added an argument: \"%s\" for viewpoint %s.",
+//                    'test',
+//                    $this->argument,
+//                    $this->viewpoint
+//                ),
+//                $this->channel
+//            );
+//        } catch (BotManException $exception) {
+//            Log::error($exception->getMessage());
+//        }
+    }
 
     public function __construct($channel, $argument, $author) {
         $this->channel = $channel;
