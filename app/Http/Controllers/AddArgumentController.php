@@ -34,6 +34,10 @@ class AddArgumentController extends Controller
         $this->argument = $argument;
         $this->user = $bot->getUser();
 
+        if ($argument == 'list' || 'rate') {
+            return;
+        }
+
         $this->botman->startConversation(new AskViewpointConversation($this->botman->getMessage()->getRecipient(), $argument, $bot->getUser()));
     }
 }
