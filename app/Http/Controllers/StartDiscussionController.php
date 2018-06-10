@@ -142,11 +142,12 @@ class StartDiscussionController extends Controller
 Discussions happen in three rounds.
 
 Round 1: 
-use `/argument {argument}` to add arguments 
 use `/viewpoint {viewpoint}` to add viewpoints 
+use `/argument {argument}` to add arguments
 
 Round 2: 
-use `/argument list` to see a list of arguments and use the buttons to prioritise 
+use `/argument list` to see a list of arguments
+use `/argument rate` to rate all arguments
 
 Round 3: 
 use `/vote {viewpoint}` to vote for a specific viewpoint 
