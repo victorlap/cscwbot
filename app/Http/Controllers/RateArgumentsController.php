@@ -34,20 +34,14 @@ class RateArgumentsController extends Controller
         $this->user = $bot->getUser();
         $this->channel = $this->botman->getMessage()->getRecipient();
 
-        $discussion = Discussion::where('discussion_channel', $this->channel)->first();
-        $viewpoints = $discussion->viewpoints;
-        foreach ($viewpoints as $viewpoint) {
-            array_push($this->arguments, Argument::where('viewpoint_id', $viewpoint->id)->get());
-        }
-
-        $this->botman->startConversation(new RateArgumentsConversation($this->channel, $this->arguments));
+        $this->botman->startConversation(new RateArgumentsConversation($this->channel));
     }
 }
 
 class RateArgumentsConversation extends Conversation
 {
     protected $channel;
-    protected $arguments;
+    protected $arguments = [];
     protected $active_argument = 0;
     protected $author;
 
@@ -97,9 +91,14 @@ class RateArgumentsConversation extends Conversation
         return false;
     }
 
-    public function __construct($channel, $arguments) {
+    public function __construct($channel) {
         $this->channel = $channel;
-        $this->arguments = $arguments;
+
+        $discussion = Discussion::where('discussion_channel', $this->channel)->first();
+        $viewpoints = $discussion->viewpoints;
+        foreach ($viewpoints as $viewpoint) {
+            array_push($this->arguments, Argument::where('viewpoint_id', $viewpoint->id)->get());
+        }
     }
 
     public function run()
