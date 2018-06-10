@@ -6,6 +6,7 @@ use App\Http\Controllers\EndDiscussionController;
 use App\Http\Controllers\GotoRoundController;
 use App\Http\Controllers\HelpController;
 use App\Http\Controllers\ListArgumentsController;
+use \App\Http\Controllers\RateArgumentsController;
 use App\Http\Controllers\ListViewpointsController;
 use App\Http\Controllers\StartDiscussionController;
 
@@ -20,6 +21,9 @@ $botman->hears('/viewpoint list', ListViewpointsController::class);
 $botman->hears('/viewpoint {name}', AddViewpointController::class);
 
 $botman->hears('/argument list', ListArgumentsController::class);
+$botman->hears('/argument rate', RateArgumentsController::class);
 $botman->hears('/argument {argument}', AddArgumentController::class);
+
+$botman->hears('/argument list', ListArgumentsController::class);
 
 $botman->hears('/goto {round}', GotoRoundController::class);

@@ -20,7 +20,7 @@ class RateArgumentsController extends Controller
 
     protected $viewpoint;
 
-    protected $argument;
+    protected $arguments;
 
     protected $channel;
 
@@ -30,10 +30,16 @@ class RateArgumentsController extends Controller
     public function __invoke($bot)
     {
         $this->botman = $bot;
-        $this->argument = $argument;
         $this->user = $bot->getUser();
+        $this->channel = $this->botman->getMessage()->getRecipient();
 
-        $this->botman->startConversation(new RateArgumentsConversation($this->botman->getMessage()->getRecipient(), $argument, $bot->getUser()));
+        $discussion = Discussion::where('discussion_channel', $this->channel)->first();
+        $viewpoints = $discussion->viewpoints;
+        foreach ($viewpoints as $viewpoint) {
+            $this->arguments = Argument::where('viewpoint_id', $viewpoint->id)->get();
+        }
+
+        $this->botman->startConversation(new RateArgumentsConversation($this->channel, $this->arguments));
     }
 }
 
@@ -44,55 +50,45 @@ class RateArgumentsConversation extends Conversation
     protected $active_argument = 0;
     protected $author;
 
-    public function rateArgument($argument)
+    public function introduceRating()
     {
-
         $discussion = Discussion::where('discussion_channel', $this->channel)->first();
         if ($discussion->state !== 'rate_arguments') {
             $this->say('You need to be in round 2 to rate arguments.');
             return true;
+        } else {
+            $this->ask('Do you want to start rating the arguments? Type `start` to start voting and `stop` if you want to cancel.', function(Answer $answer) {
+                if ($answer->getText() == 'start') {
+                    $this->say('You will now get all arguments for each viewpoint and you can score them... The options are [-1, 0, 1, 2].');
+                    $this->rateArguments();
+                } else if ($answer->getText() == 'stop') {
+                    $this->say('Stopped successfully, type `/rate` to start rating.');
+                    return true;
+                } else {
+                    $this->introduceRating();
+                }
+            });
+        }
+    }
+
+    public function rateArguments()
+    {
+        if ($this->active_argument >= count($this->arguments)) {
+            $this->concludeRating();
         }
 
-        $this->ask('What is the ID of the viewpoint for your argument? Type `stop` if you want to cancel. ' . $list, function(Answer $answer) {
-            $this->viewpoint = $answer->getText();
-            $this->addArgument();
+        $this->ask('Argument ' . ($this->active_argument + 1) . ': *' . $this->arguments[$this->active_argument]->argument . '*', function(Answer $answer) {
+            if ($answer->getText() == '-1' || '0' || '1' || '2') {
+                $this->active_argument += 1;
+            } else {
+                $this->rateArguments();
+            }
         });
     }
 
-    public function addArgument()
-    {
-
-        // Request possible IDs
-        $discussion = Discussion::where('discussion_channel', $this->channel)->first();
-        $viewpoints = $discussion->viewpoints;
-        $viewpoints_array = [];
-
-        foreach ($viewpoints as $viewpoint) {
-            array_push($viewpoints_array, $viewpoint->id);
-        }
-
-        if (in_array($this->viewpoint, $viewpoints_array) && $discussion->state === 'rate_arguments') {
-
-            Argument::create([
-                'argument' => $this->argument,
-                'viewpoint_id' => $this->viewpoint,
-                'author' => $this->author->getUsername()
-            ]);
-
-            $this->say(
-                sprintf(
-                    "<@%s> added an argument: \"%s\" for viewpoint %s.",
-                    $this->author->getUsername(),
-                    $this->argument,
-                    $this->viewpoint
-                )
-            );
-            return true;
-        } else {
-            $this->first_attempt = false;
-            $this->say("Invalid ID, try again.");
-            $this->askViewpoint();
-        }
+    public function concludeRating() {
+        $this->say('Thank you for rating the arguments. When moving to the voting round, you will get an overview of all arguments.');
+        return true;
     }
 
     public function stopsConversation(IncomingMessage $message)
@@ -104,7 +100,8 @@ class RateArgumentsConversation extends Conversation
         return false;
     }
 
-    public function __construct($arguments) {
+    public function __construct($channel, $arguments) {
+        $this->channel = $channel;
         $this->arguments = $arguments;
     }
 
