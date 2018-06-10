@@ -8,6 +8,7 @@ use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Exceptions\Base\BotManException;
 use BotMan\BotMan\Interfaces\UserInterface;
 use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\ResponseInterface;
 
 class EndDiscussionController extends Controller
