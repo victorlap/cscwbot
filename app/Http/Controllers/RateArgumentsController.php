@@ -21,7 +21,7 @@ class RateArgumentsController extends Controller
 
     protected $viewpoint;
 
-    protected $arguments;
+    protected $arguments = [];
 
     protected $channel;
 
@@ -47,7 +47,7 @@ class RateArgumentsController extends Controller
 class RateArgumentsConversation extends Conversation
 {
     protected $channel;
-    protected $arguments = [];
+    protected $arguments;
     protected $active_argument = 0;
     protected $author;
 
