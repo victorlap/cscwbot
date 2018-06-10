@@ -8,6 +8,7 @@ use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 
 class RateArgumentsController extends Controller
@@ -41,7 +42,7 @@ class RateArgumentsController extends Controller
 class RateArgumentsConversation extends Conversation
 {
     protected $channel;
-    protected $arguments = [];
+    protected $arguments;
     protected $active_argument = 0;
     protected $author;
 
@@ -93,12 +94,14 @@ class RateArgumentsConversation extends Conversation
 
     public function __construct($channel) {
         $this->channel = $channel;
+        $this->arguments = new Collection();
 
         $discussion = Discussion::where('discussion_channel', $this->channel)->first();
         $viewpoints = $discussion->viewpoints;
         foreach ($viewpoints as $viewpoint) {
-            array_push($this->arguments, Argument::where('viewpoint_id', $viewpoint->id)->get());
+            $this->arguments = $this->arguments->merge(Argument::where('viewpoint_id', $viewpoint->id)->get());
         }
+        
     }
 
     public function run()
