@@ -9,6 +9,7 @@ use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class RateArgumentsController extends Controller
@@ -43,6 +44,7 @@ class RateArgumentsConversation extends Conversation
 {
     protected $channel;
     protected $arguments;
+    protected $argument;
     protected $active_argument = 0;
     protected $author;
 
@@ -68,10 +70,15 @@ class RateArgumentsConversation extends Conversation
             $this->concludeRating();
         }
 
-        $argument = $this->arguments[$this->active_argument];
-        $this->ask('Argument ' . ($this->active_argument + 1) . ': *' . $argument->argument. '*', function(Answer $answer) {
+        $this->argument = $this->arguments[$this->active_argument];
+        $this->ask('Argument ' . ($this->active_argument + 1) . ': *' . $this->argument->argument. '*', function(Answer $answer) {
             if ($answer->getText() == '-1' || '0' || '1' || '2') {
                 $this->active_argument += 1;
+
+                DB::table('arguments')
+                    ->where('id', $this->argument->id)
+                    ->increment('priority', intval($answer->getText()));
+
                 $this->rateArguments();
             } else {
                 $this->rateArguments();
