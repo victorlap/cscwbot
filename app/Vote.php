@@ -8,7 +8,7 @@ class Vote extends Model
 {
     protected $guarded = [];
 
-    public function viewpoint()
+    public function discussion()
     {
         return $this->belongsTo(Discussion::class);
     }

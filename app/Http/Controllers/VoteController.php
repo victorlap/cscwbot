@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Argument;
+use App\Discussion;
 use App\Vote;
 use BotMan\BotMan\BotMan;
+use BotMan\BotMan\Exceptions\Base\BotManException;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
+use GuzzleHttp\Exception\RequestException;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -34,6 +37,8 @@ class VoteController extends Controller
         $this->user = $bot->getUser();
         $this->viewpoint = $viewpoint;
         $this->channel = $this->botman->getMessage()->getRecipient();
+
+        $this->vote();
     }
 
     public function vote()
