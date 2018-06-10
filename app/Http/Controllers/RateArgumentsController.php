@@ -69,9 +69,10 @@ class RateArgumentsConversation extends Conversation
         }
 
         $argument = $this->arguments[$this->active_argument];
-        $this->ask('Argument ' . ($this->active_argument + 1) . ': *' . $argument. '*', function(Answer $answer) {
+        $this->ask('Argument ' . ($this->active_argument + 1) . ': *' . $argument->argument. '*', function(Answer $answer) {
             if ($answer->getText() == '-1' || '0' || '1' || '2') {
                 $this->active_argument += 1;
+                $this->rateArguments();
             } else {
                 $this->rateArguments();
             }
@@ -101,7 +102,7 @@ class RateArgumentsConversation extends Conversation
         foreach ($viewpoints as $viewpoint) {
             $this->arguments = $this->arguments->merge(Argument::where('viewpoint_id', $viewpoint->id)->get());
         }
-        
+
     }
 
     public function run()
