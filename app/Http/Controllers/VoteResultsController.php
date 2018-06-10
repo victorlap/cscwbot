@@ -39,8 +39,8 @@ class VoteResultsController extends Controller
             $viewpoints = $discussion->viewpoints;
             $viewpoints_string = '';
             foreach ($viewpoints as $viewpoint) {
-                $votes = 0;
                 $votes = DB::table('votes')->where('viewpoint_id', $viewpoint->id)->exists();
+                $votes = ($votes ? $votes : 0);
                 $viewpoints_string .= sprintf(
                     "\nID: *%s* - *%s* with *%s* vote(s).",
                     $viewpoint->id,
