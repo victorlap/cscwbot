@@ -39,7 +39,7 @@ class ListArgumentsController extends Controller
         $viewpoints_string = '';
         foreach ($viewpoints as $viewpoint) {
             $arguments_string = '';
-            $viewpoint_arguments = Argument::where('viewpoint_id', $viewpoint->id)->get();
+            $viewpoint_arguments = Argument::where('viewpoint_id', $viewpoint->id)->orderBy('priority', 'desc')->get();
             foreach ($viewpoint_arguments as $argument) {
                 $arguments_string .= sprintf(
                     "\n• %s",
