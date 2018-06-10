@@ -68,6 +68,7 @@ class RateArgumentsConversation extends Conversation
     {
         if ($this->active_argument >= count($this->arguments)) {
             $this->concludeRating();
+            return true;
         }
 
         $this->argument = $this->arguments[$this->active_argument];
@@ -82,13 +83,13 @@ class RateArgumentsConversation extends Conversation
                 $this->rateArguments();
             } else {
                 $this->say('You can only rate using `-1`, `0`, `1` and `2`.');
+                $this->rateArguments();
             }
         });
     }
 
     public function concludeRating() {
         $this->say('Thank you for rating the arguments. When moving to the voting round, you will get an overview of all arguments.');
-        return true;
     }
 
     public function stopsConversation(IncomingMessage $message)
