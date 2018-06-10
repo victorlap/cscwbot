@@ -34,7 +34,7 @@ class AddArgumentController extends Controller
         $this->argument = $argument;
         $this->user = $bot->getUser();
 
-        if ($argument == 'list' || 'rate') {
+        if ($argument == 'list' || $argument == 'rate') {
             return;
         }
 
