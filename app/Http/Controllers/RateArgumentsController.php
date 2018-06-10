@@ -8,6 +8,7 @@ use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
+use Illuminate\Support\Facades\Log;
 
 class RateArgumentsController extends Controller
 {
@@ -36,7 +37,7 @@ class RateArgumentsController extends Controller
         $discussion = Discussion::where('discussion_channel', $this->channel)->first();
         $viewpoints = $discussion->viewpoints;
         foreach ($viewpoints as $viewpoint) {
-            $this->arguments = Argument::where('viewpoint_id', $viewpoint->id)->get();
+            array_push($this->arguments, Argument::where('viewpoint_id', $viewpoint->id)->get());
         }
 
         $this->botman->startConversation(new RateArgumentsConversation($this->channel, $this->arguments));
@@ -107,6 +108,6 @@ class RateArgumentsConversation extends Conversation
 
     public function run()
     {
-        $this->rateArguments();
+        $this->introduceRating();
     }
 }

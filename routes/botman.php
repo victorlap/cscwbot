@@ -6,7 +6,7 @@ use App\Http\Controllers\EndDiscussionController;
 use App\Http\Controllers\GotoRoundController;
 use App\Http\Controllers\HelpController;
 use App\Http\Controllers\ListArgumentsController;
-use \App\Http\Controllers\RateArgumentsController;
+use App\Http\Controllers\RateArgumentsController;
 use App\Http\Controllers\ListViewpointsController;
 use App\Http\Controllers\StartDiscussionController;
 
