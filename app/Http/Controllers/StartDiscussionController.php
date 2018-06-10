@@ -37,8 +37,8 @@ class StartDiscussionController extends Controller
         $this->name = $name;
         $this->user = $bot->getUser();
 
-        // Let the help command resolve this one
-        if($name == 'help') {
+        // Let the other commands resolve this one
+        if($name == 'help' || starts_with($name, 'end ')) {
             return;
         }
 
