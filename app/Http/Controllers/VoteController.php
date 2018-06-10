@@ -47,7 +47,7 @@ class VoteController extends Controller
             $discussion = Discussion::where('discussion_channel', $this->botman->getMessage()->getRecipient())->first();
 
             Vote::create([
-                'discussion_id' => $discussion,
+                'discussion_id' => $discussion->id,
                 'viewpoint_id' => $this->viewpoint,
                 'author' => $this->user->getUsername()
             ]);
