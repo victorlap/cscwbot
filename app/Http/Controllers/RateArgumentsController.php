@@ -59,7 +59,8 @@ class RateArgumentsConversation extends Conversation
             return true;
         } else {
             $this->ask('Do you want to start rating the arguments? Type `start` to start voting and `stop` if you want to cancel.', function(Answer $answer) {
-                if ($answer->getText() == 'start') {
+                $answer = $answer->getText();
+                if ($answer == 'start') {
                     $this->say('You will now get all arguments for each viewpoint and you can score them... The options are [-1, 0, 1, 2].');
                     $this->rateArguments();
                 } else {
