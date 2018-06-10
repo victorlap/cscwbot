@@ -62,9 +62,6 @@ class RateArgumentsConversation extends Conversation
                 if ($answer->getText() == 'start') {
                     $this->say('You will now get all arguments for each viewpoint and you can score them... The options are [-1, 0, 1, 2].');
                     $this->rateArguments();
-                } else if ($answer->getText() == 'stop') {
-                    $this->say('Stopped successfully, type `/rate` to start rating.');
-                    return true;
                 } else {
                     $this->introduceRating();
                 }
