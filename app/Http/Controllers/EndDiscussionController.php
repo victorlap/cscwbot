@@ -31,7 +31,7 @@ class EndDiscussionController extends Controller
     {
         $this->botman = $bot;
         $this->viewpoint = $viewpoint;
-        Log::info('viewpoint', $viewpoint);
+        Log::info('viewpoint', [$viewpoint]);
         $this->user = $bot->getUser();
         $this->discussion = Discussion::where('discussion_channel', $this->botman->getMessage()->getRecipient())->first();
 
