@@ -2,18 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Argument;
 use App\Discussion;
 use App\Vote;
 use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Exceptions\Base\BotManException;
-use BotMan\BotMan\Messages\Conversations\Conversation;
-use BotMan\BotMan\Messages\Incoming\Answer;
-use BotMan\BotMan\Messages\Incoming\IncomingMessage;
 use GuzzleHttp\Exception\RequestException;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class VoteController extends Controller
 {
@@ -38,13 +31,13 @@ class VoteController extends Controller
         $this->viewpoint = $viewpoint;
         $this->channel = $this->botman->getMessage()->getRecipient();
 
-        $this->vote();
-    }
+        // Let the other commands resolve this one
+        if ($viewpoint == 'result') {
+            return;
+        }
 
-    public function vote()
-    {
         try {
-            $discussion = Discussion::where('discussion_channel', $this->botman->getMessage()->getRecipient())->first();
+            $discussion = Discussion::where('discussion_channel', $bot->getMessage()->getRecipient())->first();
 
             Vote::create([
                 'discussion_id' => $discussion->id,
@@ -52,8 +45,10 @@ class VoteController extends Controller
                 'author' => $this->user->getUsername()
             ]);
 
+            $bot->reply("Thank you for your vote! Use `/vote result` to see the current standings.");
+
         } catch (RequestException | BotManException $exception) {
-            Log::error($exception->getMessage());
+            $bot->reply("You have already voted for this discussion.");
             return false;
         }
 
