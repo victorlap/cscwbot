@@ -24,6 +24,4 @@ $botman->hears('/argument list', ListArgumentsController::class);
 $botman->hears('/argument rate', RateArgumentsController::class);
 $botman->hears('/argument {argument}', AddArgumentController::class);
 
-$botman->hears('/argument list', ListArgumentsController::class);
-
 $botman->hears('/goto {round}', GotoRoundController::class);
