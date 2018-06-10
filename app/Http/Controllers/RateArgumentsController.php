@@ -73,7 +73,7 @@ class RateArgumentsConversation extends Conversation
             $this->concludeRating();
         }
 
-        $this->ask('Argument ' . ($this->active_argument + 1) . ': *' . $this->arguments[$this->active_argument]->argument . '*', function(Answer $answer) {
+        $this->ask('Argument ' . ($this->active_argument + 1) . ': *' . $this->arguments[$this->active_argument]['argument'] . '*', function(Answer $answer) {
             if ($answer->getText() == '-1' || '0' || '1' || '2') {
                 $this->active_argument += 1;
             } else {
