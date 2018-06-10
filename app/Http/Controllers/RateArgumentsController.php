@@ -66,7 +66,7 @@ class RateArgumentsConversation extends Conversation
 
     public function rateArguments()
     {
-        if ($this->active_argument >= count($this->arguments)) {
+        if ($this->active_argument >= count($this->arguments) - 1) {
             $this->concludeRating();
         }
 
