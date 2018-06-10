@@ -39,6 +39,11 @@ class VoteController extends Controller
         try {
             $discussion = Discussion::where('discussion_channel', $bot->getMessage()->getRecipient())->first();
 
+            if ($discussion->state !== 'voting') {
+                $bot->reply('You need to be in round 3 to vote.');
+                return true;
+            }
+
             Vote::create([
                 'discussion_id' => $discussion->id,
                 'viewpoint_id' => $this->viewpoint,
