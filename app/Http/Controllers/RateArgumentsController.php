@@ -72,7 +72,7 @@ class RateArgumentsConversation extends Conversation
 
         $this->argument = $this->arguments[$this->active_argument];
         $this->ask('Argument ' . ($this->active_argument + 1) . ': *' . $this->argument->argument. '*', function(Answer $answer) {
-            if ($answer->getText() == '-1' || '0' || '1' || '2') {
+            if ($answer->getText() === '-1' || '0' || '1' || '2') {
                 $this->active_argument += 1;
 
                 DB::table('arguments')
