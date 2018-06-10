@@ -43,4 +43,12 @@ class Discussion extends Model
                  return false;
         }
     }
+
+    public function close($result)
+    {
+        return $this->update([
+            'result' => $result,
+            'state' => self::STATE_CLOSED,
+        ]);
+    }
 }

@@ -35,6 +35,13 @@ class Slack
         ]);
     }
 
+    public function archiveChannel($channelId)
+    {
+        return $this->post('channels.archive', [
+            'channel' => $channelId,
+        ]);
+    }
+
     /**
      * @param $endpoint
      * @param $params
