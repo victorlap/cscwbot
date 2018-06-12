@@ -68,10 +68,11 @@ class EndDiscussionController extends Controller
         try {
             $this->botman->say(
                 sprintf(
-                    "<@%s> ended the discussion about \"%s\" with the following conclusion \"%s\". See the conlusion in <#%s|this channel>",
+                    "<@%s> ended the discussion about \"%s\" with the following conclusion \"%s\". See the conlusion in <#%s|%s>",
                     $this->user->getId(),
                     $this->discussion->name,
                     $this->viewpoint->viewpoint,
+                    $this->discussion->discussion_channel,
                     '_discussion_'. ($this->discussion->id+1)
                 ),
                 $channel
