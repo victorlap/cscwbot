@@ -8,7 +8,6 @@ use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Exceptions\Base\BotManException;
 use BotMan\BotMan\Interfaces\UserInterface;
 use GuzzleHttp\Exception\RequestException;
-use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\ResponseInterface;
 
 class EndDiscussionController extends Controller
@@ -33,9 +32,8 @@ class EndDiscussionController extends Controller
         $this->viewpoint = $viewpoint;
         $this->user = $bot->getUser();
         $this->discussion = Discussion::where('discussion_channel', $this->botman->getMessage()->getRecipient())->first();
-        Log::info('viewpoint', [$viewpoint, $this->discussion->viewpoints()->pluck('id')->toArray()]);
 
-        if(! $this->discussion->viewpoints()->pluck('id')->has($viewpoint)) {
+        if(! $this->discussion->viewpoints()->pluck('id')->has((int)$viewpoint)) {
             $this->botman->reply("Invalid viewpoint id, try listing viewpoints with /viewpoint list");
             return;
         }
