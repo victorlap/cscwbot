@@ -41,7 +41,7 @@ class EndDiscussionController extends Controller
         $this->discussion->close($viewpoint);
 
         $this->sendConclusionToChannel($this->discussion->discussion_channel);
-        $this->sendConclusionToChannel($this->discussion->originating_channel);
+        $this->sendConclusionToOriginatingChannel($this->discussion->originating_channel);
         $this->closeChannel();
     }
 
@@ -60,6 +60,23 @@ class EndDiscussionController extends Controller
         } catch (BotManException $exception) {
         }
     }
+
+    protected function sendConclusionToOriginatingChannel($channel)
+    {
+        try {
+            $this->botman->say(
+                sprintf(
+                    "<@%s> ended the discussion about \"%s\" with the following conclusion \"%s\". See the conlusion in <#%s|this channel>",
+                    $this->user->getId(),
+                    $this->discussion->name,
+                    $this->viewpoint
+                ),
+                $channel
+            );
+        } catch (BotManException $exception) {
+        }
+    }
+
 
     protected function closeChannel()
     {
