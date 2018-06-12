@@ -23,7 +23,7 @@ class Viewpoint extends Model
         return static::when($discussionId, function($query) use ($discussionId) {
             $query->where('discussion_id', $discussionId);
         })->where(function($query) use ($nameOrId) {
-            $query->where('id', $nameOrId)->orWhere('name', $nameOrId);
+            $query->where('id', $nameOrId)->orWhere('viewpoint', $nameOrId);
         })->first();
     }
 }

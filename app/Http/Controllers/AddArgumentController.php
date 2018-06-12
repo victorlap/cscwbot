@@ -65,7 +65,7 @@ class AskViewpointConversation extends Conversation
             $list = ListViewpointsController::listViewpoints($this->channel);
         }
 
-        $this->ask('What is the ID / name of the viewpoint for your argument? Type `stop` if you want to cancel. ' . $list, function (Answer $answer) {
+        $this->ask('What is the ID or name of the viewpoint for your argument? Type `stop` if you want to cancel. ' . $list, function (Answer $answer) {
             $this->viewpoint = $answer->getText();
             $this->addArgument();
         });
@@ -90,7 +90,7 @@ class AskViewpointConversation extends Conversation
                     "<@%s> added an argument: \"%s\" for viewpoint %s.",
                     $this->author->getUsername(),
                     $this->argument,
-                    $viewpoint->name
+                    $viewpoint->viewpoint
                 )
             );
             return true;
