@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Argument;
 use App\Discussion;
+use App\Viewpoint;
 use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
@@ -64,7 +65,7 @@ class AskViewpointConversation extends Conversation
             $list = ListViewpointsController::listViewpoints($this->channel);
         }
 
-        $this->ask('What is the ID of the viewpoint for your argument? Type `stop` if you want to cancel. ' . $list, function(Answer $answer) {
+        $this->ask('What is the ID / name of the viewpoint for your argument? Type `stop` if you want to cancel. ' . $list, function (Answer $answer) {
             $this->viewpoint = $answer->getText();
             $this->addArgument();
         });
@@ -72,21 +73,15 @@ class AskViewpointConversation extends Conversation
 
     public function addArgument()
     {
-
-        // Request possible IDs
         $discussion = Discussion::where('discussion_channel', $this->channel)->first();
-        $viewpoints = $discussion->viewpoints;
-        $viewpoints_array = [];
 
-        foreach ($viewpoints as $viewpoint) {
-            array_push($viewpoints_array, $viewpoint->id);
-        }
+        $viewpoint = Viewpoint::findByNameOrId($this->viewpoint, $discussion->id);
 
-        if (in_array($this->viewpoint, $viewpoints_array) && $discussion->state === 'add_arguments') {
+        if ($viewpoint) {
 
             Argument::create([
                 'argument' => $this->argument,
-                'viewpoint_id' => $this->viewpoint,
+                'viewpoint_id' => $viewpoint->id,
                 'author' => $this->author->getUsername()
             ]);
 
@@ -95,13 +90,13 @@ class AskViewpointConversation extends Conversation
                     "<@%s> added an argument: \"%s\" for viewpoint %s.",
                     $this->author->getUsername(),
                     $this->argument,
-                    $this->viewpoint
+                    $viewpoint->name
                 )
             );
             return true;
         } else {
             $this->first_attempt = false;
-            $this->say("Invalid ID, try again.");
+            $this->say("Invalid viewpoint, try again.");
             $this->askViewpoint();
         }
     }
@@ -115,7 +110,8 @@ class AskViewpointConversation extends Conversation
         return false;
     }
 
-    public function __construct($channel, $argument, $author) {
+    public function __construct($channel, $argument, $author)
+    {
         $this->channel = $channel;
         $this->argument = $argument;
         $this->author = $author;

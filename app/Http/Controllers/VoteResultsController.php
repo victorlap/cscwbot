@@ -3,8 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Discussion;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Vote;
 
 class VoteResultsController extends Controller
 {
@@ -39,7 +38,7 @@ class VoteResultsController extends Controller
             $viewpoints = $discussion->viewpoints;
             $viewpoints_string = '';
             foreach ($viewpoints as $viewpoint) {
-                $votes = DB::table('votes')->where('viewpoint_id', $viewpoint->id)->exists();
+                $votes = Vote::where('viewpoint_id', $viewpoint->id)->exists();
                 $votes = ($votes ? $votes : 0);
                 $viewpoints_string .= sprintf(
                     "\nID: *%s* - *%s* with *%s* vote(s).",

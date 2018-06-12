@@ -38,13 +38,13 @@ class StartDiscussionController extends Controller
         $this->user = $bot->getUser();
 
         // Let the other commands resolve this one
-        if($name == 'help' || starts_with($name, 'end ')) {
+        if ($name == 'help' || starts_with($name, 'end ')) {
             return;
         }
 
         $bot->reply("Got it. Give me a few seconds to get that done...");
 
-        if(!$this->createSlackChannel()) {
+        if (!$this->createSlackChannel()) {
             $this->respondError();
             return;
         }
@@ -74,7 +74,7 @@ class StartDiscussionController extends Controller
 
             $response = json_decode((string)$response->getBody());
 
-            if(!$response->ok) {
+            if (!$response->ok) {
                 return false;
             }
 
@@ -83,7 +83,7 @@ class StartDiscussionController extends Controller
             $this->bot = $this->botman->sendRequest('auth.test');
 
             $this->bot = json_decode($this->bot->getContent());
-            if(!$this->bot->ok) {
+            if (!$this->bot->ok) {
                 return false;
             }
 
@@ -138,7 +138,7 @@ class StartDiscussionController extends Controller
                 $this->channel->id
             );
             $this->botman->say(
-            "
+                "
 Discussions happen in three rounds.
 
 Round 1: 

@@ -8,9 +8,6 @@ use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class RateArgumentsController extends Controller
 {
@@ -55,7 +52,7 @@ class RateArgumentsConversation extends Conversation
             $this->say('You need to be in round 2 to rate arguments.');
             return true;
         } else {
-            $this->ask('Do you want to start rating the arguments? Type `start` to start voting and `stop` if you want to cancel.', function(Answer $answer) {
+            $this->ask('Do you want to start rating the arguments? Type `start` to start voting and `stop` if you want to cancel.', function (Answer $answer) {
                 if ($answer->getText() == 'start') {
 //                    $this->say('You will now get all arguments for each viewpoint and you can score them... The options are [-1, 0, 1, 2].');
                     $this->rateArguments();
@@ -72,12 +69,11 @@ class RateArgumentsConversation extends Conversation
         }
 
         $this->argument = $this->arguments[$this->active_argument];
-        $this->ask('Argument ' . ($this->active_argument + 1) . ': *' . $this->argument->argument. '*', function(Answer $answer) {
+        $this->ask('Argument ' . ($this->active_argument + 1) . ': *' . $this->argument->argument . '*', function (Answer $answer) {
             if ($answer->getText() === '-1' || $answer->getText() === '0' || $answer->getText() === '1' || $answer->getText() === '2') {
                 $this->active_argument += 1;
 
-                DB::table('arguments')
-                    ->where('id', $this->argument->id)
+                Argument::where('id', $this->argument->id)
                     ->increment('priority', intval($answer->getText()));
 
                 $this->rateArguments();
@@ -88,7 +84,8 @@ class RateArgumentsConversation extends Conversation
         });
     }
 
-    public function concludeRating() {
+    public function concludeRating()
+    {
         $this->say('Thank you for rating the arguments. When moving to the voting round, you will get an overview of all arguments.');
     }
 
@@ -101,16 +98,12 @@ class RateArgumentsConversation extends Conversation
         return false;
     }
 
-    public function __construct($channel) {
+    public function __construct($channel)
+    {
         $this->channel = $channel;
-        $this->arguments = new Collection();
-
         $discussion = Discussion::where('discussion_channel', $this->channel)->first();
-        $viewpoints = $discussion->viewpoints;
-        foreach ($viewpoints as $viewpoint) {
-            $this->arguments = $this->arguments->merge(Argument::where('viewpoint_id', $viewpoint->id)->get());
-        }
 
+        $this->arguments = Argument::whereIn('viewpoint_id', $discussion->viewpoints()->pluck('id'));
     }
 
     public function run()

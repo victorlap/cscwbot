@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Discussion;
 use BotMan\BotMan\BotMan;
-use Illuminate\Support\Facades\Log;
 
 class ListViewpointsController extends Controller
 {
@@ -46,10 +45,10 @@ class ListViewpointsController extends Controller
         }
 
         return (
-            sprintf(
-                "The viewpoints are: %s",
-                $viewpoints_string
-            )
+        sprintf(
+            "The viewpoints are: %s",
+            $viewpoints_string
+        )
         );
 
     }

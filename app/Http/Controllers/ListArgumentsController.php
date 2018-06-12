@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Argument;
 use App\Discussion;
-use App\Viewpoint;
 use BotMan\BotMan\BotMan;
 
 class ListArgumentsController extends Controller

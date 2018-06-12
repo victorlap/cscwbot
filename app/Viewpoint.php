@@ -17,4 +17,13 @@ class Viewpoint extends Model
     {
         return $this->belongsTo(Discussion::class);
     }
+
+    public static function findByNameOrId($nameOrId, $discussionId = null): self
+    {
+        return static::when($discussionId, function($query) use ($discussionId) {
+            $query->where('discussion_id', $discussionId);
+        })->where(function($query) use ($nameOrId) {
+            $query->where('id', $nameOrId)->orWhere('name', $nameOrId);
+        })->first();
+    }
 }

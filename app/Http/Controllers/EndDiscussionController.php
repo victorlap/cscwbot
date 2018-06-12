@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Clients\Slack;
 use App\Discussion;
+use App\Viewpoint;
 use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Exceptions\Base\BotManException;
 use BotMan\BotMan\Interfaces\UserInterface;
@@ -32,9 +33,10 @@ class EndDiscussionController extends Controller
         $this->viewpoint = $viewpoint;
         $this->user = $bot->getUser();
         $this->discussion = Discussion::where('discussion_channel', $this->botman->getMessage()->getRecipient())->first();
+        $this->viewpoint = Viewpoint::findByNameOrId($viewpoint, $this->discussion->id);
 
-        if(! $this->discussion->viewpoints()->where('id', $viewpoint)->exists()) {
-            $this->botman->reply("Invalid viewpoint id, try listing viewpoints with /viewpoint list");
+        if (!$this->viewpoint) {
+            $this->botman->reply("Invalid viewpoint, try listing viewpoints with /viewpoint list");
             return;
         }
 
@@ -53,7 +55,7 @@ class EndDiscussionController extends Controller
                     "<@%s> ended the discussion about \"%s\" with the following conclusion \"%s\".",
                     $this->user->getId(),
                     $this->discussion->name,
-                    $this->viewpoint
+                    $this->viewpoint->name
                 ),
                 $channel
             );
@@ -69,7 +71,7 @@ class EndDiscussionController extends Controller
                     "<@%s> ended the discussion about \"%s\" with the following conclusion \"%s\". See the conlusion in <#%s|this channel>",
                     $this->user->getId(),
                     $this->discussion->name,
-                    $this->viewpoint
+                    $this->viewpoint->name
                 ),
                 $channel
             );
