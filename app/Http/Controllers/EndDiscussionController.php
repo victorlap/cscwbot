@@ -71,7 +71,8 @@ class EndDiscussionController extends Controller
                     "<@%s> ended the discussion about \"%s\" with the following conclusion \"%s\". See the conlusion in <#%s|this channel>",
                     $this->user->getId(),
                     $this->discussion->name,
-                    $this->viewpoint->viewpoint
+                    $this->viewpoint->viewpoint,
+                    $this->discussion->discussion_channel
                 ),
                 $channel
             );
