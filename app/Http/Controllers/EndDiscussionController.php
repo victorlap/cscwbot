@@ -40,7 +40,7 @@ class EndDiscussionController extends Controller
             return;
         }
 
-        $this->discussion->close($viewpoint);
+        $this->discussion->close($this->viewpoint->id);
 
         $this->sendConclusionToChannel($this->discussion->discussion_channel);
         $this->sendConclusionToOriginatingChannel($this->discussion->originating_channel);
