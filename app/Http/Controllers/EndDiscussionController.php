@@ -72,7 +72,7 @@ class EndDiscussionController extends Controller
                     $this->user->getId(),
                     $this->discussion->name,
                     $this->viewpoint->viewpoint,
-                    $this->discussion->discussion_channel
+                    '_discussion_'. ($this->discussion->id+1)
                 ),
                 $channel
             );
