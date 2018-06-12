@@ -33,7 +33,7 @@ class EndDiscussionController extends Controller
         $this->user = $bot->getUser();
         $this->discussion = Discussion::where('discussion_channel', $this->botman->getMessage()->getRecipient())->first();
 
-        if(! $this->discussion->viewpoints()->pluck('id')->has((int)$viewpoint)) {
+        if(! $this->discussion->viewpoints()->where('id', $viewpoint)->exists()) {
             $this->botman->reply("Invalid viewpoint id, try listing viewpoints with /viewpoint list");
             return;
         }
