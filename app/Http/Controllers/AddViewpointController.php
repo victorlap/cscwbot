@@ -51,7 +51,7 @@ class AddViewpointController extends Controller
         try {
             $this->botman->say(
                 sprintf(
-                    "@%s added a viewpoint: \"%s\".",
+                    "<@%s> added a viewpoint: \"%s\".",
                     $this->user->getUsername(),
                     $this->name
                 ),

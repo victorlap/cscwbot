@@ -42,8 +42,6 @@ class StartDiscussionController extends Controller
             return;
         }
 
-        $bot->reply("Got it. Give me a few seconds to get that done...");
-
         if (!$this->createSlackChannel()) {
             $this->respondError();
             return;
