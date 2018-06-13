@@ -9,6 +9,7 @@ use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
+use Illuminate\Support\Facades\Log;
 
 class RateArgumentsController extends Controller
 {
@@ -31,6 +32,7 @@ class RateArgumentsConversation extends Conversation
     protected $argument;
     protected $active_argument = 0;
     protected $author;
+    protected $toBeDeleted = [];
 
     public function introduceRating()
     {
@@ -57,7 +59,7 @@ class RateArgumentsConversation extends Conversation
         }
 
         $this->argument = $this->arguments[$this->active_argument];
-        $this->ask('Viewpoint: "' . $this->argument->viewpoint->viewpoint . '" - Argument ' . ($this->active_argument + 1) . ': *' . $this->argument->argument . '*', function (Answer $answer) {
+        $ask = $this->ask('Viewpoint: "' . $this->argument->viewpoint->viewpoint . '" - Argument ' . ($this->active_argument + 1) . ': *' . $this->argument->argument . '*', function (Answer $answer) {
             app(Slack::class)->deleteMessage($answer->getMessage()->getRecipient(), $answer->getMessage()->getPayload()->get('ts'));
             if ($answer->getText() === '-1' || $answer->getText() === '0' || $answer->getText() === '1' || $answer->getText() === '2') {
                 $this->active_argument += 1;
@@ -67,17 +69,18 @@ class RateArgumentsConversation extends Conversation
 
                 $this->rateArguments();
             } else {
-                $this->say('You can only rate using `-1`, `0`, `1` and `2`.', ['as_user' => true]);
+                $this->getBot()->reply('You can only rate using `-1`, `0`, `1` and `2`.');
                 $this->rateArguments();
             }
         }, ['as_user' => true]);
+        Log::info('ask', [json_encode($ask)]);
+
     }
 
     public function concludeRating()
     {
-        $this->say(
-            'Thank you for rating the arguments. When moving to the voting round, you will get an overview of all arguments.',
-            ['as_user' => true]
+        $this->getBot()->reply(
+            'Thank you for rating the arguments. When moving to the voting round, you will get an overview of all arguments.'
         );
     }
 
