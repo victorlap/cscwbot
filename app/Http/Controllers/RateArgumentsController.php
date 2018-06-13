@@ -106,9 +106,13 @@ class RateArgumentsConversation extends Conversation
     {
         $reply = $this->bot->reply($message, $additionalParameters);
 
-        Log::info('toBeDeleted[]', [json_decode($reply->getContent())]);
+        $reply = json_decode($reply->getContent());
 
-        $this->toBeDeleted[] = json_decode($reply->getContent())->ts;
+        Log::info('toBeDeleted[]', [$reply]);
+
+        if(isset($reply->ts)) {
+            $this->toBeDeleted[] = json_decode($reply->getContent())->ts;
+        }
 
         return $this;
     }
