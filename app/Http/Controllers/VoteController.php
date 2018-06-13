@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Discussion;
+use App\Viewpoint;
 use App\Vote;
 use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Exceptions\Base\BotManException;
@@ -16,8 +17,6 @@ class VoteController extends Controller
 
     protected $user;
 
-    protected $viewpoint;
-
     protected $channel;
 
     /**
@@ -28,7 +27,6 @@ class VoteController extends Controller
     {
         $this->botman = $bot;
         $this->user = $bot->getUser();
-        $this->viewpoint = $viewpoint;
         $this->channel = $this->botman->getMessage()->getRecipient();
 
         // Let the other commands resolve this one
@@ -39,14 +37,21 @@ class VoteController extends Controller
         try {
             $discussion = Discussion::where('discussion_channel', $bot->getMessage()->getRecipient())->first();
 
+            $viewpoint = Viewpoint::findByNameOrId($viewpoint, $discussion->id);
+
+            if (!$viewpoint) {
+                $this->botman->reply("Invalid viewpoint, try listing viewpoints with /viewpoint list");
+                return;
+            }
+
             if ($discussion->state !== 'voting') {
-                $bot->reply('You need to be in round 3 to vote.');
-                return true;
+                $bot->reply('You need to be in the voting round to vote.');
+                return;
             }
 
             Vote::create([
                 'discussion_id' => $discussion->id,
-                'viewpoint_id' => $this->viewpoint,
+                'viewpoint_id' => $viewpoint->id,
                 'author' => $this->user->getUsername()
             ]);
 
@@ -54,9 +59,9 @@ class VoteController extends Controller
 
         } catch (RequestException | BotManException $exception) {
             $bot->reply("You have already voted for this discussion.");
-            return false;
+            return;
         }
 
-        return true;
+        return;
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Clients\Slack;
 use App\Discussion;
 use App\Viewpoint;
+use App\Vote;
 use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Exceptions\Base\BotManException;
 use BotMan\BotMan\Interfaces\UserInterface;
@@ -56,6 +57,23 @@ class EndDiscussionController extends Controller
     protected function sendConclusionToChannel($channel)
     {
         try {
+            $viewpoints = $this->discussion->viewpoints;
+            $viewpoints_string = '';
+            foreach ($viewpoints as $viewpoint) {
+                $votes = Vote::where('viewpoint_id', $viewpoint->id)->exists();
+                $votes = ($votes ? $votes : 0);
+                $viewpoints_string .= sprintf(
+                    "\nID: *%s* - *%s* with *%s* vote(s).",
+                    $viewpoint->id,
+                    $viewpoint->viewpoint,
+                    $votes
+                );
+            }
+            $this->botman->say(
+                "The voting results were: \n" . $viewpoints_string,
+                $channel
+            );
+
             $this->botman->say(
                 sprintf(
                     "<@%s> ended the discussion about \"%s\" with the following conclusion \"%s\".",
