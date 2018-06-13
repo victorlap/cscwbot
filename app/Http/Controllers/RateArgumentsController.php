@@ -40,7 +40,7 @@ class RateArgumentsConversation extends Conversation
             $this->say('You need to be in the rating round to rate arguments.');
             return true;
         } else {
-            $this->reply('Do you want to start rating the arguments? Type `start` to start voting and `stop` if you want to cancel.', function (Answer $answer) {
+            $this->ask('Do you want to start rating the arguments? Type `start` to start voting and `stop` if you want to cancel.', function (Answer $answer) {
                 if ($answer->getText() == 'start') {
                     $this->reply('You can sore each argument from one of: [-1, 0, 1, 2].');
                     app(Slack::class)->deleteMessage($answer->getMessage()->getRecipient(), $answer->getMessage()->getPayload()->get('ts'));
