@@ -9,7 +9,6 @@ use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
-use Illuminate\Support\Facades\Log;
 
 class RateArgumentsController extends Controller
 {
@@ -43,7 +42,7 @@ class RateArgumentsConversation extends Conversation
         } else {
             $this->ask('Do you want to start rating the arguments? Type `start` to start voting and `stop` if you want to cancel.', function (Answer $answer) {
                 if ($answer->getText() == 'start') {
-                    $this->reply('You can sore each argument from one of: [-1, 0, 1, 2].');
+                    $this->say('You can sore each argument from one of: [-1, 0, 1, 2].');
                     app(Slack::class)->deleteMessage($answer->getMessage()->getRecipient(), $answer->getMessage()->getPayload()->get('ts'));
                     $this->rateArguments();
                 }
@@ -60,7 +59,6 @@ class RateArgumentsConversation extends Conversation
 
         $this->argument = $this->arguments[$this->active_argument];
         $this->ask('Viewpoint: "' . $this->argument->viewpoint->viewpoint . '" - Argument ' . ($this->active_argument + 1) . ': *' . $this->argument->argument . '*', function (Answer $answer) {
-            $this->deleteMessages($answer);
             if ($answer->getText() === '-1' || $answer->getText() === '0' || $answer->getText() === '1' || $answer->getText() === '2') {
                 $this->active_argument += 1;
 
@@ -69,7 +67,7 @@ class RateArgumentsConversation extends Conversation
 
                 $this->rateArguments();
             } else {
-                $this->reply('You can only rate using `-1`, `0`, `1` and `2`.');
+                $this->say('You can only rate using `-1`, `0`, `1` and `2`.');
                 $this->rateArguments();
             }
         });
@@ -82,42 +80,6 @@ class RateArgumentsConversation extends Conversation
             'Thank you for rating the arguments. When moving to the voting round, you will get an overview of all arguments.'
         );
     }
-
-    public function deleteMessages(Answer $answer)
-    {
-        $this->toBeDeleted[] = $answer->getMessage()->getPayload()->get('ts');
-
-        foreach ($this->toBeDeleted as $ts) {
-            app(Slack::class)->deleteMessage($answer->getMessage()->getRecipient(), $ts);
-        }
-
-    }
-
-    /** Override */
-    public function ask($question, $next, $additionalParameters = [])
-    {
-        $this->reply($question, $additionalParameters);
-        $this->bot->storeConversation($this, $next, $question, $additionalParameters);
-
-        return $this;
-    }
-
-    public function reply($message, $additionalParameters = [])
-    {
-        $reply = $this->bot->reply($message, $additionalParameters);
-
-        $reply = json_decode($reply->getContent());
-
-        Log::info('toBeDeleted[]', [$reply]);
-
-        if(isset($reply->ts)) {
-            $this->toBeDeleted[] = $reply->ts;
-        }
-
-        return $this;
-    }
-
-
 
     public function stopsConversation(IncomingMessage $message)
     {
