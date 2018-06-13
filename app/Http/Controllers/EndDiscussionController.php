@@ -35,6 +35,12 @@ class EndDiscussionController extends Controller
         $this->discussion = Discussion::where('discussion_channel', $this->botman->getMessage()->getRecipient())->first();
         $this->viewpoint = Viewpoint::findByNameOrId($viewpoint, $this->discussion->id);
 
+        if ($this->discussion->state !== 'voting') {
+            $this->say('You need to be in the voting round to end the discussion. Use `/round help` to see possible commands for this round.');
+            return true;
+        }
+
+
         if (!$this->viewpoint) {
             $this->botman->reply("Invalid viewpoint, try listing viewpoints with /viewpoint list");
             return;

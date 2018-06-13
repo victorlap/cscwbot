@@ -11,29 +11,15 @@ use BotMan\BotMan\Messages\Incoming\IncomingMessage;
 
 class RateArgumentsController extends Controller
 {
-
-    protected $botman;
-
-    protected $bot;
-
-    protected $user;
-
-    protected $viewpoint;
-
-    protected $arguments = [];
-
-    protected $channel;
-
     /**
      * @param BotMan $bot
      */
     public function __invoke($bot)
     {
-        $this->botman = $bot;
-        $this->user = $bot->getUser();
-        $this->channel = $this->botman->getMessage()->getRecipient();
 
-        $this->botman->startConversation(new RateArgumentsConversation($this->channel));
+        $channel = $bot->getMessage()->getRecipient();
+
+        $bot->startConversation(new RateArgumentsConversation($channel));
     }
 }
 
@@ -49,7 +35,7 @@ class RateArgumentsConversation extends Conversation
     {
         $discussion = Discussion::where('discussion_channel', $this->channel)->first();
         if ($discussion->state !== 'rate_arguments') {
-            $this->say('You need to be in round 2 to rate arguments.');
+            $this->say('You need to be in the rating round to rate arguments.');
             return true;
         } else {
             $this->ask('Do you want to start rating the arguments? Type `start` to start voting and `stop` if you want to cancel.', function (Answer $answer) {

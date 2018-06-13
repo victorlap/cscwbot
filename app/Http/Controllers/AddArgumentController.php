@@ -12,34 +12,17 @@ use BotMan\BotMan\Messages\Incoming\IncomingMessage;
 
 class AddArgumentController extends Controller
 {
-
-    protected $botman;
-
-    protected $bot;
-
-    protected $user;
-
-    protected $viewpoint;
-
-    protected $argument;
-
-    protected $channel;
-
     /**
      * @param BotMan $bot
      * @param string $argument
      */
     public function __invoke($bot, $argument)
     {
-        $this->botman = $bot;
-        $this->argument = $argument;
-        $this->user = $bot->getUser();
-
         if ($argument == 'list' || $argument == 'rate') {
             return;
         }
 
-        $this->botman->startConversation(new AskViewpointConversation($this->botman->getMessage()->getRecipient(), $argument, $bot->getUser()));
+        $bot->startConversation(new AskViewpointConversation($bot->getMessage()->getRecipient(), $argument, $bot->getUser()));
     }
 }
 
@@ -56,7 +39,7 @@ class AskViewpointConversation extends Conversation
 
         $discussion = Discussion::where('discussion_channel', $this->channel)->first();
         if ($discussion->state !== 'add_arguments') {
-            $this->say('You need to be in round 1 to add arguments. Use `/round help` to see possible commands for this round.');
+            $this->say('You need to be in the debating round to add arguments. Use `/round help` to see possible commands for this round.');
             return true;
         }
 

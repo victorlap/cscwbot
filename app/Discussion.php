@@ -44,6 +44,20 @@ class Discussion extends Model
         }
     }
 
+    public function getStateNameAttribute()
+    {
+        switch ($this->state) {
+            case self::STATE_ADD_ARGUMENTS:
+                return "debating round";
+            case self::STATE_RATE_ARGUMENTS:
+                return "rating round";
+            case self::STATE_VOTING:
+                return "voting round";
+            default:
+                return "";
+        }
+    }
+
     public function close($result)
     {
         return $this->update([

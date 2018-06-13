@@ -144,18 +144,23 @@ use `/viewpoint list` to see a list of viewpoints
 
 Discussions happen in three rounds.
 
-Round 1 (Adding arguments):
+Debating round:
 use `/viewpoint {viewpoint}` to add viewpoints 
 use `/argument {argument}` to add arguments
 
-Round 2 (Rating arguments): 
+Rating round: 
 use `/argument rate` to rate all arguments
 
-Round 3 (Voting): 
+Voting round: 
 use `/vote {viewpoint}` to vote for a specific viewpoint 
 
 When everyone is done voting, you can close the channel using `/discussion end {viewpoint}`, you must provide a winning viewpoint which gets communicated to the originating channel.
             ",
+                $this->channel->id
+            );
+
+            $this->botman->say(
+                "The debating round has begun! discuss away!",
                 $this->channel->id
             );
 

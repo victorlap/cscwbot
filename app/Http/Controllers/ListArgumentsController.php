@@ -46,7 +46,7 @@ class ListArgumentsController extends Controller
                 );
             }
             $viewpoints_string .= sprintf(
-                "\n*%s*, supporting arguments: %s\n",
+                "\n*%s*: %s\n",
                 $viewpoint->viewpoint,
                 $arguments_string
             );

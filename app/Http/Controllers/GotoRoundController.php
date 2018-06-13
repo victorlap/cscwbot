@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Discussion;
 use BotMan\BotMan\BotMan;
+use BotMan\BotMan\Exceptions\Base\BotManException;
 
 class GotoRoundController extends Controller
 {
@@ -28,6 +29,13 @@ class GotoRoundController extends Controller
         }
 
         $discussion->update(['state' => $state]);
+
+        try {
+            if($discussion->state_name) {
+                $bot->say(sprintf("The %s has begun!", $discussion->state_name), $bot->getMessage()->getRecipient());
+            }
+        } catch (BotManException $e) {
+        }
 
         $bot->reply(sprintf("Moved to round %s", $state));
     }
