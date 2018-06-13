@@ -59,8 +59,8 @@ class RateArgumentsConversation extends Conversation
         }
 
         $this->argument = $this->arguments[$this->active_argument];
-        $ask = $this->ask('Viewpoint: "' . $this->argument->viewpoint->viewpoint . '" - Argument ' . ($this->active_argument + 1) . ': *' . $this->argument->argument . '*', function (Answer $answer) {
-            app(Slack::class)->deleteMessage($answer->getMessage()->getRecipient(), $answer->getMessage()->getPayload()->get('ts'));
+        $this->ask('Viewpoint: "' . $this->argument->viewpoint->viewpoint . '" - Argument ' . ($this->active_argument + 1) . ': *' . $this->argument->argument . '*', function (Answer $answer) {
+            $this->deleteMessages($answer);
             if ($answer->getText() === '-1' || $answer->getText() === '0' || $answer->getText() === '1' || $answer->getText() === '2') {
                 $this->active_argument += 1;
 
@@ -72,8 +72,7 @@ class RateArgumentsConversation extends Conversation
                 $this->getBot()->reply('You can only rate using `-1`, `0`, `1` and `2`.');
                 $this->rateArguments();
             }
-        }, ['as_user' => true]);
-        Log::info('ask', [json_encode($ask)]);
+        });
 
     }
 
@@ -83,6 +82,28 @@ class RateArgumentsConversation extends Conversation
             'Thank you for rating the arguments. When moving to the voting round, you will get an overview of all arguments.'
         );
     }
+
+    public function deleteMessages(Answer $answer)
+    {
+        $this->toBeDeleted[] = $answer->getMessage()->getPayload()->get('ts');
+
+        foreach ($this->toBeDeleted as $ts) {
+            app(Slack::class)->deleteMessage($answer->getMessage()->getRecipient(), $ts);
+        }
+
+    }
+
+    /** Override */
+    public function ask($question, $next, $additionalParameters = [])
+    {
+        $reply = $this->bot->reply($question, $additionalParameters);
+        $this->bot->storeConversation($this, $next, $question, $additionalParameters);
+
+        Log::info('reply', [json_decode($reply->getContent())]);
+
+        return $this;
+    }
+
 
     public function stopsConversation(IncomingMessage $message)
     {
