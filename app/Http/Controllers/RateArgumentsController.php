@@ -9,7 +9,6 @@ use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
-use Illuminate\Support\Facades\Log;
 
 class RateArgumentsController extends Controller
 {
@@ -41,9 +40,9 @@ class RateArgumentsConversation extends Conversation
             $this->say('You need to be in the rating round to rate arguments.');
             return true;
         } else {
-            $this->ask('Do you want to start rating the arguments? Type `start` to start voting and `stop` if you want to cancel.', function (Answer $answer) {
+            $this->reply('Do you want to start rating the arguments? Type `start` to start voting and `stop` if you want to cancel.', function (Answer $answer) {
                 if ($answer->getText() == 'start') {
-                    $this->say('You can sore each argument from one of: [-1, 0, 1, 2].');
+                    $this->reply('You can sore each argument from one of: [-1, 0, 1, 2].');
                     app(Slack::class)->deleteMessage($answer->getMessage()->getRecipient(), $answer->getMessage()->getPayload()->get('ts'));
                     $this->rateArguments();
                 }
@@ -69,7 +68,7 @@ class RateArgumentsConversation extends Conversation
 
                 $this->rateArguments();
             } else {
-                $this->getBot()->reply('You can only rate using `-1`, `0`, `1` and `2`.');
+                $this->reply('You can only rate using `-1`, `0`, `1` and `2`.');
                 $this->rateArguments();
             }
         });
@@ -78,7 +77,7 @@ class RateArgumentsConversation extends Conversation
 
     public function concludeRating()
     {
-        $this->getBot()->reply(
+        $this->say(
             'Thank you for rating the arguments. When moving to the voting round, you will get an overview of all arguments.'
         );
     }
@@ -96,13 +95,21 @@ class RateArgumentsConversation extends Conversation
     /** Override */
     public function ask($question, $next, $additionalParameters = [])
     {
-        $reply = $this->bot->reply($question, $additionalParameters);
+        $this->reply($question, $additionalParameters);
         $this->bot->storeConversation($this, $next, $question, $additionalParameters);
-
-        Log::info('reply', [json_decode($reply->getContent())]);
 
         return $this;
     }
+
+    public function reply($message, $additionalParameters = [])
+    {
+        $reply = $this->bot->reply($message, $additionalParameters);
+
+        $this->toBeDeleted[] = $reply->ts;
+
+        return $this;
+    }
+
 
 
     public function stopsConversation(IncomingMessage $message)
