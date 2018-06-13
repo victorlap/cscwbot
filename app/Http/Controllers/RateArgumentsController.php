@@ -89,7 +89,7 @@ class RateArgumentsConversation extends Conversation
         $this->channel = $channel;
         $discussion = Discussion::where('discussion_channel', $this->channel)->first();
 
-        $this->arguments = Argument::whereIn('viewpoint_id', $discussion->viewpoints()->pluck('id'));
+        $this->arguments = Argument::whereIn('viewpoint_id', $discussion->viewpoints()->pluck('id'))->get();
     }
 
     public function run()
