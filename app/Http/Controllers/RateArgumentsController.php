@@ -9,6 +9,7 @@ use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
+use Illuminate\Support\Facades\Log;
 
 class RateArgumentsController extends Controller
 {
@@ -104,6 +105,8 @@ class RateArgumentsConversation extends Conversation
     public function reply($message, $additionalParameters = [])
     {
         $reply = $this->bot->reply($message, $additionalParameters);
+
+        Log::info('toBeDeleted[]', [json_decode($reply->getContent())]);
 
         $this->toBeDeleted[] = json_decode($reply->getContent())->ts;
 
