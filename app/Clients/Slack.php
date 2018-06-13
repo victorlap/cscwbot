@@ -47,6 +47,7 @@ class Slack
         return $this->post('chat.delete', [
             'channel' => $channelId,
             'ts' => $timestamp,
+        ]);
     }
 
     /**
