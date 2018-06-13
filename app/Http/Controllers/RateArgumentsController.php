@@ -57,7 +57,7 @@ class RateArgumentsConversation extends Conversation
         }
 
         $this->argument = $this->arguments[$this->active_argument];
-        $this->ask('Viewpoint: "'. $this->argument->viewpoint->viewpoint .'" - Argument ' . ($this->active_argument + 1) . ': *' . $this->argument->argument . '*', function (Answer $answer) {
+        $this->ask('Viewpoint: "' . $this->argument->viewpoint->viewpoint . '" - Argument ' . ($this->active_argument + 1) . ': *' . $this->argument->argument . '*', function (Answer $answer) {
             app(Slack::class)->deleteMessage($answer->getMessage()->getRecipient(), $answer->getMessage()->getPayload()->get('ts'));
             if ($answer->getText() === '-1' || $answer->getText() === '0' || $answer->getText() === '1' || $answer->getText() === '2') {
                 $this->active_argument += 1;
@@ -67,15 +67,18 @@ class RateArgumentsConversation extends Conversation
 
                 $this->rateArguments();
             } else {
-                $this->say('You can only rate using `-1`, `0`, `1` and `2`.');
+                $this->say('You can only rate using `-1`, `0`, `1` and `2`.', ['as_user' => true]);
                 $this->rateArguments();
             }
-        });
+        }, ['as_user' => true]);
     }
 
     public function concludeRating()
     {
-        $this->say('Thank you for rating the arguments. When moving to the voting round, you will get an overview of all arguments.');
+        $this->say(
+            'Thank you for rating the arguments. When moving to the voting round, you will get an overview of all arguments.',
+            ['as_user' => true]
+        );
     }
 
     public function stopsConversation(IncomingMessage $message)
