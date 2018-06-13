@@ -42,6 +42,13 @@ class Slack
         ]);
     }
 
+    public function deleteMessage($channelId, $timestamp)
+    {
+        return $this->post('chat.delete', [
+            'channel' => $channelId,
+            'ts' => $timestamp,
+    }
+
     /**
      * @param $endpoint
      * @param $params

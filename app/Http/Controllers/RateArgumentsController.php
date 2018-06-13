@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Argument;
+use App\Clients\Slack;
 use App\Discussion;
 use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Messages\Conversations\Conversation;
@@ -41,6 +42,7 @@ class RateArgumentsConversation extends Conversation
             $this->ask('Do you want to start rating the arguments? Type `start` to start voting and `stop` if you want to cancel.', function (Answer $answer) {
                 if ($answer->getText() == 'start') {
                     $this->say('You can sore each argument from one of: [-1, 0, 1, 2].');
+                    app(Slack::class)->deleteMessage($answer->getMessage()->getRecipient(), $answer->getMessage()->getPayload()->get('ts'));
                     $this->rateArguments();
                 }
             });
@@ -56,6 +58,7 @@ class RateArgumentsConversation extends Conversation
 
         $this->argument = $this->arguments[$this->active_argument];
         $this->ask('Viewpoint: "'. $this->argument->viewpoint->viewpoint .'" - Argument ' . ($this->active_argument + 1) . ': *' . $this->argument->argument . '*', function (Answer $answer) {
+            app(Slack::class)->deleteMessage($answer->getMessage()->getRecipient(), $answer->getMessage()->getPayload()->get('ts'));
             if ($answer->getText() === '-1' || $answer->getText() === '0' || $answer->getText() === '1' || $answer->getText() === '2') {
                 $this->active_argument += 1;
 
