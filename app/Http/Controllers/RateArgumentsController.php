@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Argument;
-use App\Clients\Slack;
 use App\Discussion;
 use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
+use BotMan\BotMan\Messages\Outgoing\Actions\Button;
+use BotMan\BotMan\Messages\Outgoing\Question;
+use BotMan\Drivers\Slack\SlackDriver;
 
 class RateArgumentsController extends Controller
 {
@@ -20,7 +22,7 @@ class RateArgumentsController extends Controller
 
         $channel = $bot->getMessage()->getRecipient();
 
-        $bot->startConversation(new RateArgumentsConversation($channel));
+        $bot->startConversation(new RateArgumentsConversation($channel), $bot->getUser()->getId(), SlackDriver::class);
     }
 }
 
@@ -31,7 +33,6 @@ class RateArgumentsConversation extends Conversation
     protected $argument;
     protected $active_argument = 0;
     protected $author;
-    protected $toBeDeleted = [];
 
     public function introduceRating()
     {
@@ -40,10 +41,15 @@ class RateArgumentsConversation extends Conversation
             $this->say('You need to be in the rating round to rate arguments.');
             return true;
         } else {
-            $this->ask('Do you want to start rating the arguments? Type `start` to start voting and `stop` if you want to cancel.', function (Answer $answer) {
-                if ($answer->getText() == 'start') {
+            $question = Question::create('Do you want to start rating the arguments?')
+                ->callbackId('create_database')
+                ->addButtons([
+                    Button::create('Yes please!')->value('start'),
+                    Button::create('No')->value('stop'),
+                ]);
+            $this->ask($question, function (Answer $answer) {
+                if ($answer->getValue() == 'start') {
                     $this->say('You can sore each argument from one of: [-1, 0, 1, 2].');
-                    app(Slack::class)->deleteMessage($answer->getMessage()->getRecipient(), $answer->getMessage()->getPayload()->get('ts'));
                     $this->rateArguments();
                 }
             });

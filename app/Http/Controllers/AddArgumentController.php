@@ -3,13 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Argument;
-use App\Clients\Slack;
 use App\Discussion;
 use App\Viewpoint;
 use BotMan\BotMan\BotMan;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
+use BotMan\Drivers\Slack\SlackDriver;
 
 class AddArgumentController extends Controller
 {
@@ -23,7 +23,7 @@ class AddArgumentController extends Controller
             return;
         }
 
-        $bot->startConversation(new AskViewpointConversation($bot->getMessage()->getRecipient(), $argument, $bot->getUser()));
+        $bot->startConversation(new AskViewpointConversation($bot->getMessage()->getRecipient(), $argument, $bot->getUser()), $bot->getUser(), SlackDriver::class);
     }
 }
 
@@ -51,7 +51,6 @@ class AskViewpointConversation extends Conversation
 
         $this->ask('What is the ID or name of the viewpoint for your argument? Type `stop` if you want to cancel. ' . $list, function (Answer $answer) {
             $this->viewpoint = $answer->getText();
-            app(Slack::class)->deleteMessage($answer->getMessage()->getRecipient(), $answer->getMessage()->getPayload()->get('ts'));
             $this->addArgument($answer);
         });
     }
