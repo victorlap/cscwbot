@@ -54,7 +54,7 @@ class AskViewpointConversation extends Conversation
             ->callbackId('choose_viewpoint')
             ->addButtons($buttons);
         $this->ask($question, function (Answer $answer) {
-            $this->viewpoint = $answer->getText();
+            $this->viewpoint = $answer->getValue();
             $this->addArgument($answer);
         });
     }
