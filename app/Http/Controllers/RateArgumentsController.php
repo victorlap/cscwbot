@@ -64,8 +64,16 @@ class RateArgumentsConversation extends Conversation
         }
 
         $this->argument = $this->arguments[$this->active_argument];
-        $this->ask('Viewpoint: "' . $this->argument->viewpoint->viewpoint . '" - Argument ' . ($this->active_argument + 1) . ': *' . $this->argument->argument . '*', function (Answer $answer) {
-            if ($answer->getText() === '-1' || $answer->getText() === '0' || $answer->getText() === '1' || $answer->getText() === '2') {
+        $question = Question::create('Viewpoint: "' . $this->argument->viewpoint->viewpoint . '" - Argument ' . ($this->active_argument + 1) . ': *' . $this->argument->argument . '*')
+            ->callbackId('answer_'. $this->active_argument)
+            ->addButtons([
+                Button::create('-1')->value('-1'),
+                Button::create('0')->value('0'),
+                Button::create('1')->value('1'),
+                Button::create('2')->value('2'),
+            ]);
+        $this->ask($question, function (Answer $answer) {
+            if ($answer->getValue() === '-1' || $answer->getValue() === '0' || $answer->getValue() === '1' || $answer->getValue() === '2') {
                 $this->active_argument += 1;
 
                 Argument::where('id', $this->argument->id)
