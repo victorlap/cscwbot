@@ -3,15 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Argument;
+use App\Clients\Slack;
 use App\Discussion;
 use App\Viewpoint;
 use BotMan\BotMan\BotMan;
-use BotMan\BotMan\Exceptions\Base\BotManException;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
-use BotMan\BotMan\Messages\Outgoing\Actions\Button;
-use BotMan\BotMan\Messages\Outgoing\Question;
 
 class AddArgumentController extends Controller
 {
@@ -46,22 +44,15 @@ class AskViewpointConversation extends Conversation
             return true;
         }
 
-        $buttons = [];
-        foreach ($discussion->viewpoints as $viewpoint) {
-            $buttons[] = Button::create($viewpoint->viewpoint)->value($viewpoint->id);
+        $list = '';
+        if ($this->first_attempt) {
+            $list = ListViewpointsController::listViewpoints($this->channel);
         }
-        $question = Question::create('What is the viewpoint for your argument?')
-            ->callbackId('choose_viewpoint')
-            ->addButtons($buttons);
-        $question = Question::create('Do you want to start rating the arguments?')
-            ->callbackId('create_database')
-            ->addButtons([
-                Button::create('Yes please!')->value('start'),
-                Button::create('No')->value('stop'),
-            ]);
-        $this->ask($question, function (Answer $answer) {
-            $this->viewpoint = $answer->getValue();
-            $this->addArgument();
+
+        $this->ask('What is the ID or name of the viewpoint for your argument? Type `stop` if you want to cancel. ' . $list, function (Answer $answer) {
+            $this->viewpoint = $answer->getText();
+            app(Slack::class)->deleteMessage($answer->getMessage()->getRecipient(), $answer->getMessage()->getPayload()->get('ts'));
+            $this->addArgument($answer);
         });
     }
 
@@ -79,19 +70,14 @@ class AskViewpointConversation extends Conversation
                 'author' => $this->author->getUsername()
             ]);
 
-            try {
-                $this->getBot()->say(
-                    sprintf(
-                        "<@%s> added an argument: \"%s\" for viewpoint %s.",
-                        $this->author->getUsername(),
-                        $this->argument,
-                        $viewpoint->viewpoint
-                    ),
-                    $discussion->discussion_channel
-                );
-            } catch (BotManException $exception) {
-            }
-
+            $this->say(
+                sprintf(
+                    "<@%s> added an argument: \"%s\" for viewpoint %s.",
+                    $this->author->getUsername(),
+                    $this->argument,
+                    $viewpoint->viewpoint
+                )
+            );
             return true;
         } else {
             $this->first_attempt = false;
