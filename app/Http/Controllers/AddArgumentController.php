@@ -52,10 +52,16 @@ class AskViewpointConversation extends Conversation
         }
         $question = Question::create('What is the viewpoint for your argument?')
             ->callbackId('choose_viewpoint')
-            ->addButtons([Button::create('yes')]);
+            ->addButtons($buttons);
+        $question = Question::create('Do you want to start rating the arguments?')
+            ->callbackId('create_database')
+            ->addButtons([
+                Button::create('Yes please!')->value('start'),
+                Button::create('No')->value('stop'),
+            ]);
         $this->ask($question, function (Answer $answer) {
             $this->viewpoint = $answer->getValue();
-            $this->addArgument($answer);
+            $this->addArgument();
         });
     }
 
