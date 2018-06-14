@@ -59,7 +59,7 @@ class VoteController extends Controller
 
             try {
                 $bot->say(
-                    sprintf('<@%s> just finished rating', $this->user->getUsername() ),
+                    sprintf('<@%s> just finished voting', $this->user->getUsername() ),
                     $discussion->discussion_channel
                 );
             } catch (BotManException $exception) {
