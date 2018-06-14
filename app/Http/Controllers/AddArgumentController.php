@@ -10,7 +10,8 @@ use BotMan\BotMan\Exceptions\Base\BotManException;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
-use BotMan\Drivers\Slack\SlackDriver;
+use BotMan\BotMan\Messages\Outgoing\Actions\Button;
+use BotMan\BotMan\Messages\Outgoing\Question;
 
 class AddArgumentController extends Controller
 {
@@ -24,7 +25,7 @@ class AddArgumentController extends Controller
             return;
         }
 
-        $bot->startConversation(new AskViewpointConversation($bot->getMessage()->getRecipient(), $argument, $bot->getUser()), $bot->getUser()->getId(), SlackDriver::class);
+        $bot->startConversation(new AskViewpointConversation($bot->getMessage()->getRecipient(), $argument, $bot->getUser()));
     }
 }
 
@@ -45,12 +46,14 @@ class AskViewpointConversation extends Conversation
             return true;
         }
 
-        $list = '';
-        if ($this->first_attempt) {
-            $list = ListViewpointsController::listViewpoints($this->channel);
+        $buttons = [];
+        foreach ($discussion->viewpoints as $viewpoint) {
+            $buttons[] = Button::create($viewpoint->viewpoint)->value($viewpoint->id);
         }
-
-        $this->ask('What is the ID or name of the viewpoint for your argument? Type `stop` if you want to cancel. ' . $list, function (Answer $answer) {
+        $question = Question::create('What is the viewpoint for your argument?')
+            ->callbackId('choose_viewpoint')
+            ->addButtons($buttons);
+        $this->ask($question, function (Answer $answer) {
             $this->viewpoint = $answer->getText();
             $this->addArgument($answer);
         });
