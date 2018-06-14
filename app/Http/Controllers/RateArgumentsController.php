@@ -58,12 +58,13 @@ class RateArgumentsConversation extends Conversation
 
     public function rateArguments()
     {
-        $this->argument = $this->arguments[$this->active_argument];
 
         if ($this->active_argument >= count($this->arguments)) {
             $this->concludeRating();
             return true;
         }
+
+        $this->argument = $this->arguments[$this->active_argument];
 
         $question = Question::create('Viewpoint: "' . $this->argument->viewpoint->viewpoint . '" - Argument ' . ($this->active_argument + 1) . ': *' . $this->argument->argument . '*')
             ->callbackId('answer_'. $this->active_argument)
