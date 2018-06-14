@@ -6,6 +6,7 @@ use App\Argument;
 use App\Discussion;
 use App\Viewpoint;
 use BotMan\BotMan\BotMan;
+use BotMan\BotMan\Exceptions\Base\BotManException;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
@@ -69,15 +70,19 @@ class AskViewpointConversation extends Conversation
                 'author' => $this->author->getUsername()
             ]);
 
-            $this->getBot()->say(
-                sprintf(
-                    "<@%s> added an argument: \"%s\" for viewpoint %s.",
-                    $this->author->getUsername(),
-                    $this->argument,
-                    $viewpoint->viewpoint
-                ),
-                $discussion->discussion_channel
-            );
+            try {
+                $this->getBot()->say(
+                    sprintf(
+                        "<@%s> added an argument: \"%s\" for viewpoint %s.",
+                        $this->author->getUsername(),
+                        $this->argument,
+                        $viewpoint->viewpoint
+                    ),
+                    $discussion->discussion_channel
+                );
+            } catch (BotManException $exception) {
+            }
+
             return true;
         } else {
             $this->first_attempt = false;
