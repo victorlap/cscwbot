@@ -65,7 +65,7 @@ class VoteController extends Controller
             } catch (BotManException $exception) {
             }
 
-        } catch (RequestException | BotManException $exception) {
+        } catch (RequestException | \Exception $exception) {
             $bot->reply("You have already voted for this discussion.");
             return;
         }
