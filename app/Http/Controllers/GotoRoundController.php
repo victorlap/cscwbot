@@ -39,6 +39,7 @@ class GotoRoundController extends Controller
             if($discussion->state == Discussion::STATE_RATE_ARGUMENTS) {
                 $bot->say("The following arguments will be rated by each participant in this round:", $channel);
                 $bot->say(ListArgumentsController::listArguments($channel), $channel);
+                $bot->say("You can start the rating process by typing: `/argument rate`", $channel);
             }
 
             if($discussion->state == Discussion::STATE_VOTING) {
