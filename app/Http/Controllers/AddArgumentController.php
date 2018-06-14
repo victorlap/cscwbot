@@ -69,13 +69,14 @@ class AskViewpointConversation extends Conversation
                 'author' => $this->author->getUsername()
             ]);
 
-            $this->say(
+            $this->getBot()->say(
                 sprintf(
                     "<@%s> added an argument: \"%s\" for viewpoint %s.",
                     $this->author->getUsername(),
                     $this->argument,
                     $viewpoint->viewpoint
-                )
+                ),
+                $discussion->discussion_channel
             );
             return true;
         } else {
