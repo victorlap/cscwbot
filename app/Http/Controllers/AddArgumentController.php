@@ -23,7 +23,7 @@ class AddArgumentController extends Controller
             return;
         }
 
-        $bot->startConversation(new AskViewpointConversation($bot->getMessage()->getRecipient(), $argument, $bot->getUser()), $bot->getUser(), SlackDriver::class);
+        $bot->startConversation(new AskViewpointConversation($bot->getMessage()->getRecipient(), $argument, $bot->getUser()), $bot->getUser()->getId(), SlackDriver::class);
     }
 }
 
