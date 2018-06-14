@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Argument;
 use App\Discussion;
 use BotMan\BotMan\BotMan;
+use BotMan\BotMan\Exceptions\Base\BotManException;
 use BotMan\BotMan\Messages\Conversations\Conversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
 use BotMan\BotMan\Messages\Incoming\IncomingMessage;
@@ -57,12 +58,13 @@ class RateArgumentsConversation extends Conversation
 
     public function rateArguments()
     {
+        $this->argument = $this->arguments[$this->active_argument];
+
         if ($this->active_argument >= count($this->arguments)) {
             $this->concludeRating();
             return true;
         }
 
-        $this->argument = $this->arguments[$this->active_argument];
         $question = Question::create('Viewpoint: "' . $this->argument->viewpoint->viewpoint . '" - Argument ' . ($this->active_argument + 1) . ': *' . $this->argument->argument . '*')
             ->callbackId('answer_'. $this->active_argument)
             ->addButtons([
@@ -92,6 +94,14 @@ class RateArgumentsConversation extends Conversation
         $this->say(
             'Thank you for rating the arguments. When moving to the voting round, you will get an overview of all arguments.'
         );
+        try {
+            $this->getBot()->say(
+                sprintf('<@%s> just finished rating', $this->author ),
+                $this->argument->viewpoint->discussion->discussion_channel
+            );
+        } catch (BotManException $exception) {
+        }
+
     }
 
     public function stopsConversation(IncomingMessage $message)
