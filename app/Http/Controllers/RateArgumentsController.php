@@ -49,7 +49,6 @@ class RateArgumentsConversation extends Conversation
                 ]);
             $this->ask($question, function (Answer $answer) {
                 if ($answer->getValue() == 'start') {
-                    $this->say('You can sore each argument from one of: [-1, 0, 1, 2].');
                     $this->rateArguments();
                 }
             });
