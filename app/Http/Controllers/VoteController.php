@@ -57,6 +57,14 @@ class VoteController extends Controller
 
             $bot->reply("Thank you for your vote! Use `/vote result` to see the current standings.");
 
+            try {
+                $bot->say(
+                    sprintf('<@%s> just finished rating', $this->user->getUsername() ),
+                    $discussion->discussion_channel
+                );
+            } catch (BotManException $exception) {
+            }
+
         } catch (RequestException | BotManException $exception) {
             $bot->reply("You have already voted for this discussion.");
             return;
