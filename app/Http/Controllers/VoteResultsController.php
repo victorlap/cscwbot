@@ -32,7 +32,7 @@ class VoteResultsController extends Controller
     {
 
         $discussion = Discussion::where('discussion_channel', $channel)->first();
-        if ($discussion->state !== 'voting') {
+        if ($discussion->state !== 'voting' && $discussion->state !== 'closed') {
             return 'You need to be in the voting round to see the voting results.';
         } else {
             $viewpoints = $discussion->viewpoints;
